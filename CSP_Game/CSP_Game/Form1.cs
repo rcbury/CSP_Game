@@ -19,19 +19,19 @@ namespace CSP_Game
         List<Player> players;
         Player currentPlayer;
 
-        public void InitializeMap() 
+        public void InitializeMap()
         {
             map = new Photo(50, 30);
             pictureBox1.Height = map.height * map.pixelHeight;
             pictureBox1.Width = map.width * map.pixelWidth;
             for (int x = 0; x < map.width; x++)
-                for (int y = 0; y < map.height; y++) 
+                for (int y = 0; y < map.height; y++)
                 {
                     map[x, y] = new Pixel(1, 1, 1);
                 }
         }
 
-        public void InitializePlayer() 
+        public void InitializePlayer()
         {
             players = new List<Player>();
             players.Add(new Player("Andrew", Color.Green));
@@ -47,21 +47,26 @@ namespace CSP_Game
             InitializeMap();
             InitializePlayer();
             pictureBox1.Image = Convertors.Photo2Bitmap(map);
+            List<Player> employes = new List<Player>{
+                new Player(Name = "Митька", Color.Green),
+                };
+            comboBox1.DataSource = employes;
+            comboBox1.DisplayMember = "Name";
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
         {
             int x = (int)Math.Floor((double)Cursor.Position.X / map.pixelWidth);
-            int y = (int)Math.Floor((double)(Cursor.Position.Y - 30)/ map.pixelHeight);
-            map[x, y] = new Pixel((double)currentPlayer.Color.R/255, 
-                (double)currentPlayer.Color.G / 255, 
+            int y = (int)Math.Floor((double)(Cursor.Position.Y - 30) / map.pixelHeight);
+            map[x, y] = new Pixel((double)currentPlayer.Color.R / 255,
+                (double)currentPlayer.Color.G / 255,
                 (double)currentPlayer.Color.B / 255);
             pictureBox1.Image = Convertors.Photo2Bitmap(map);
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (players.Where(player => player.IsAlive).Count() != 1) 
+            if (players.Where(player => player.IsAlive).Count() != 1)
             {
                 playerIndex++;
                 if (playerIndex > players.Count - 1)
@@ -69,6 +74,11 @@ namespace CSP_Game
                 currentPlayer = players[playerIndex];
                 Text = currentPlayer.Name;
             }
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+          
         }
     }
 }
