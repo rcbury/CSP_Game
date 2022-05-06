@@ -8,3 +8,14 @@ C:\Users\roman\source\repos\rcbury\CSP_Game\CSP_Game\CSP_Game\obj\Debug\CSP_Game
 C:\Users\roman\source\repos\rcbury\CSP_Game\CSP_Game\CSP_Game\obj\Debug\CSP_Game.csproj.CoreCompileInputs.cache
 C:\Users\roman\source\repos\rcbury\CSP_Game\CSP_Game\CSP_Game\obj\Debug\CSP_Game.exe
 C:\Users\roman\source\repos\rcbury\CSP_Game\CSP_Game\CSP_Game\obj\Debug\CSP_Game.pdb
+C:\Users\heanware\Source\Repos\CSP_Game\CSP_Game\CSP_Game\bin\Debug\CSP_Game.exe.config
+C:\Users\heanware\Source\Repos\CSP_Game\CSP_Game\CSP_Game\bin\Debug\CSP_Game.exe
+C:\Users\heanware\Source\Repos\CSP_Game\CSP_Game\CSP_Game\bin\Debug\CSP_Game.pdb
+C:\Users\heanware\Source\Repos\CSP_Game\CSP_Game\CSP_Game\obj\Debug\CSP_Game.csproj.AssemblyReference.cache
+C:\Users\heanware\Source\Repos\CSP_Game\CSP_Game\CSP_Game\obj\Debug\CSP_Game.csproj.SuggestedBindingRedirects.cache
+C:\Users\heanware\Source\Repos\CSP_Game\CSP_Game\CSP_Game\obj\Debug\CSP_Game.Form1.resources
+C:\Users\heanware\Source\Repos\CSP_Game\CSP_Game\CSP_Game\obj\Debug\CSP_Game.Properties.Resources.resources
+C:\Users\heanware\Source\Repos\CSP_Game\CSP_Game\CSP_Game\obj\Debug\CSP_Game.csproj.GenerateResource.cache
+C:\Users\heanware\Source\Repos\CSP_Game\CSP_Game\CSP_Game\obj\Debug\CSP_Game.csproj.CoreCompileInputs.cache
+C:\Users\heanware\Source\Repos\CSP_Game\CSP_Game\CSP_Game\obj\Debug\CSP_Game.exe
+C:\Users\heanware\Source\Repos\CSP_Game\CSP_Game\CSP_Game\obj\Debug\CSP_Game.pdb
