@@ -8,9 +8,13 @@ namespace CSP_Game
 {
     public class PlayerTurn
     {
-      /*  public void Build(Player player, AnyObject x, Tuple<int, int> position)
+        public void Build(Player player, AnyObject x, Tuple<int, int> position)
         {
-            player.Units.Add(x)
-        }*/
+            player.AddMastery(position, x);
+        }
+        public void Attack()
+        {
+            
+        }
     }
 }
