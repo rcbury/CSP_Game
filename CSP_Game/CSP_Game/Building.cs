@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CSP_Game
 {
-    public class Building: AnyObject
+    public class Building : AnyObject
     {
         public readonly Tuple<int, int> Position;
     }
