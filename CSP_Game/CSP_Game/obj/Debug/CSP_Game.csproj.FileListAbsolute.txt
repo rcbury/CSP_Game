@@ -1,0 +1,10 @@
+C:\Users\roman\source\repos\rcbury\CSP_Game\CSP_Game\CSP_Game\bin\Debug\CSP_Game.exe.config
+C:\Users\roman\source\repos\rcbury\CSP_Game\CSP_Game\CSP_Game\bin\Debug\CSP_Game.exe
+C:\Users\roman\source\repos\rcbury\CSP_Game\CSP_Game\CSP_Game\bin\Debug\CSP_Game.pdb
+C:\Users\roman\source\repos\rcbury\CSP_Game\CSP_Game\CSP_Game\obj\Debug\CSP_Game.csprojAssemblyReference.cache
+C:\Users\roman\source\repos\rcbury\CSP_Game\CSP_Game\CSP_Game\obj\Debug\CSP_Game.Form1.resources
+C:\Users\roman\source\repos\rcbury\CSP_Game\CSP_Game\CSP_Game\obj\Debug\CSP_Game.Properties.Resources.resources
+C:\Users\roman\source\repos\rcbury\CSP_Game\CSP_Game\CSP_Game\obj\Debug\CSP_Game.csproj.GenerateResource.cache
+C:\Users\roman\source\repos\rcbury\CSP_Game\CSP_Game\CSP_Game\obj\Debug\CSP_Game.csproj.CoreCompileInputs.cache
+C:\Users\roman\source\repos\rcbury\CSP_Game\CSP_Game\CSP_Game\obj\Debug\CSP_Game.exe
+C:\Users\roman\source\repos\rcbury\CSP_Game\CSP_Game\CSP_Game\obj\Debug\CSP_Game.pdb
