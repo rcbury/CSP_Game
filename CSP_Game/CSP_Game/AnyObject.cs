@@ -12,7 +12,10 @@ namespace CSP_Game
         public int Border { get; set; }
         public double HP { get; set; }
         public Color Color { get; set; }
-        public int Price { get; set; }
-        public string Name { get; set; }
+
+        public AnyObject()
+        {
+
+        }
     }
 }

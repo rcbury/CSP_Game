@@ -9,36 +9,16 @@ namespace CSP_Game
 {
     public class Building : AnyObject
     {
-        protected Tuple<int, int> Position;
+        public readonly Tuple<int, int> Position;
     }
 
     public class MiningCamp : Building
     {
         public int GPS { get; set; }
-        public MiningCamp(Player player, Tuple<int,int> coords)
-        {
-            Name = "Рудник";
-            GPS = 5;
-            Position = coords;
-            HP = 40;
-            Border = 1;
-            Color = player.Color;
-            Price = 20;
-        }
     }
 
     public class Tower : Building
     {
         public double Armor { get; set; }
-        public Tower(Player player, Tuple<int, int> coords)
-        {
-            Name = "Башня";
-            Armor = 0.5;
-            Position = coords;
-            HP = 80;
-            Border = 2;
-            Color = player.Color;
-            Price = 50;
-        }
     }
 }
