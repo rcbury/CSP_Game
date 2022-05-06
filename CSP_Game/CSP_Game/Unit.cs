@@ -16,7 +16,8 @@ namespace CSP_Game
     }
     public class Tank : Unit
     {
-        public Tank(Player player, Tuple<int, int> coords)
+        
+        public Tank(Player player, Tuple<int, int> coords = null)
         {
             Name = "Танк";
             MovingRange = 3;
@@ -31,7 +32,7 @@ namespace CSP_Game
     }
     public class RifleMan : Unit
     {
-        public RifleMan(Player player, Tuple<int, int> coords)
+        public RifleMan(Player player, Tuple<int, int> coords = null)
         {
             Name = "Снайпер";
             MovingRange = 5;

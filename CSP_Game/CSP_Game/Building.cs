@@ -15,7 +15,7 @@ namespace CSP_Game
     public class MiningCamp : Building
     {
         public int GPS { get; set; }
-        public MiningCamp(Player player, Tuple<int,int> coords)
+        public MiningCamp(Player player, Tuple<int,int> coords = null)
         {
             Name = "Рудник";
             GPS = 5;
@@ -30,7 +30,7 @@ namespace CSP_Game
     public class Tower : Building
     {
         public double Armor { get; set; }
-        public Tower(Player player, Tuple<int, int> coords)
+        public Tower(Player player, Tuple<int, int> coords = null)
         {
             Name = "Башня";
             Armor = 0.5;
