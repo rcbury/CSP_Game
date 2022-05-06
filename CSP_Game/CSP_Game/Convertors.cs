@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using MyPhotoshop.Data;
+using MyPhotoshop;
 
 namespace MyPhotoshop
 {
@@ -9,10 +10,12 @@ namespace MyPhotoshop
 		public static Photo Bitmap2Photo(Bitmap bmp)
 		{
 			var photo=new Photo(bmp.Width, bmp.Height);
-			for (int x=0;x < bmp.Width;x++)
-				for (int y=0;y < bmp.Height;y++)
+			int width = bmp.Width / photo.pixelWidth;
+			int height = bmp.Height / photo.pixelHeight;
+			for (int x=0;x < width;x++)
+				for (int y=0;y < height;y++)
 				{
-				var pixel= bmp.GetPixel (x,y);
+				var pixel= bmp.GetPixel(x*photo.pixelWidth + 1,y*photo.pixelHeight + 1);
 					photo[x, y] = new Pixel((double)pixel.R / 255, (double)pixel.G / 255,
 						(double)pixel.B / 255);
 				}
@@ -28,13 +31,23 @@ namespace MyPhotoshop
 		
 		public static Bitmap Photo2Bitmap(Photo photo)
 		{
-			var bmp=new Bitmap(photo.width,photo.height);
+			var bmp=new Bitmap(photo.width * photo.pixelWidth , photo.height * photo.pixelHeight);
 			for (int x = 0; x < bmp.Width; x++)
 				for (int y = 0; y < bmp.Height; y++)
-					bmp.SetPixel(x, y, Color.FromArgb(
-						ToChannel(photo[x, y].R),
-						ToChannel(photo[x, y].G),
-						ToChannel(photo[x, y].B)));    		
+					if (x % photo.pixelWidth == 0 || y % photo.pixelHeight == 0)
+					{
+						bmp.SetPixel(x, y, Color.Black);
+					}
+					else 
+					{
+						bmp.SetPixel(x, y, Color.FromArgb(
+						ToChannel(photo[(int)Math.Floor((double)x / photo.pixelWidth),
+						(int)Math.Floor((double)y / photo.pixelHeight)].R),
+						ToChannel(photo[(int)Math.Floor((double)x / photo.pixelWidth),
+						(int)Math.Floor((double)y / photo.pixelHeight)].G),
+						ToChannel(photo[(int)Math.Floor((double)x / photo.pixelWidth),
+						(int)Math.Floor((double)y / photo.pixelHeight)].B)));
+					}    		
 			return bmp;
 		}
 	}
