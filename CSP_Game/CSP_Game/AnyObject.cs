@@ -13,8 +13,6 @@ namespace CSP_Game
         public double HP { get; set; }
         public Color Color { get; set; }
 
-
-
         public AnyObject()
         {
 

@@ -7,17 +7,17 @@ using System.Threading.Tasks;
 
 namespace CSP_Game
 {
-    public class MoveableObject : AnyObject
+    public class Building : AnyObject
     {
         public readonly Tuple<int, int> Position;
     }
 
-    public class MiningCamp : MoveableObject
+    public class MiningCamp : Building
     {
         public int GPS { get; set; }
     }
 
-    public class Tower : MoveableObject
+    public class Tower : Building
     {
         public double Armor { get; set; }
     }
