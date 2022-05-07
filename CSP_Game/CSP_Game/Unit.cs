@@ -39,7 +39,7 @@ namespace CSP_Game
         public RifleMan(Player player, Tuple<int, int> coords = null)
         {
             Position = coords;
-            Border = 1;
+            Border = 0;
             HP = 60;
             Color = player.Color;
             Price = 20;

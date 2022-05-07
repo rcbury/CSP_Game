@@ -19,24 +19,23 @@ namespace CSP_Game
             player.UpdateTreasure(5);
             player.SetUnitsHaveRested();
         }
-        public static void Build(Player player, AnyObject x, Tuple<int, int> position, Photo map)
+        public static void Build(Player player, AnyObject x, Tuple<int, int> position)
         {
             x.Position = position;
             player.AddMastery(position, x);
-            for (int i = position.Item1 - x.Border; i <= position.Item1 + x.Border; i++)
-            {
-                for (int j = position.Item2 - x.Border; j <= position.Item2 + x.Border; j++)
-                {
-                    map[i, j] = new Pixel((double)player.Color.R / 255,
-                                          (double)player.Color.G / 255,
-                                          (double)player.Color.B / 255);
-                }
-            }
             /*            MessageBox.Show(newObject.ToString());*/
         }
         public static void Attack()
         {
             
+        }
+        public static Unit ReturnSelectedUnit(Player player, Tuple<int, int> position)
+        {
+            return player.ReturnSelectedUnit(position);
+        }
+        public static void MoveSelectedUnit(Player player, Unit x, Tuple<int, int> position)
+        {
+            player.MoveSelectedUnit(x.Position, position);
         }
     }
 }

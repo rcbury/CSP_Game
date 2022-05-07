@@ -30,6 +30,22 @@ namespace CSP_Game
         {
             Mastery.Remove(coords);
         }
+        public Unit ReturnSelectedUnit(Tuple<int, int> coords)
+        {
+            if (Mastery.ContainsKey(coords) && Mastery[coords] is Unit)
+            {
+                return Mastery[coords] as Unit;
+            }
+            else
+            {
+                return null;
+            }
+        }
+        public void MoveSelectedUnit(Tuple<int, int> coordsStart, Tuple<int, int> coordsEnd)
+        {
+            Mastery[coordsEnd] = Mastery[coordsStart];
+            Mastery.Remove(coordsStart);
+        }
         public void UpdateTreasure(int value)
         {
             Treasure += value;
