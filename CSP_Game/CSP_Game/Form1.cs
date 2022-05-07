@@ -18,11 +18,11 @@ namespace CSP_Game
         int playerIndex;
         List<Player> players;
         Player currentPlayer;
-        bool bIsBuilding = false; // проверка на нажатие кнопки, если была нажата - нужно строить
+        bool bIsBuilding = false; // Check if user wants to build smth
 
         public void InitializeMap()
         {
-            map = new Photo(50, 30);
+            map = new Photo(80, 80);
             pictureBox1.Height = map.height * map.pixelHeight;
             pictureBox1.Width = map.width * map.pixelWidth;
             for (int x = 0; x < map.width; x++)
@@ -57,6 +57,8 @@ namespace CSP_Game
             };
             comboBox1.DataSource = masterySelector;
             comboBox1.DisplayMember = "Name";
+            PlayerTurn.OnTurnStart(currentPlayer);
+            label2.Text = currentPlayer.Treasure.ToString();
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
@@ -66,14 +68,17 @@ namespace CSP_Game
             int y = (int)Math.Floor((double)(Cursor.Position.Y - 30) / map.pixelHeight);
             if (bIsBuilding)
             {
-                PlayerTurn.Build(currentPlayer, (AnyObject)comboBox1.SelectedValue, new Tuple<int, int>(x, y));
+                var objectToBuild = (AnyObject)comboBox1.SelectedValue;
+                int border = objectToBuild.Border; 
+              PlayerTurn.Build(currentPlayer, objectToBuild, new Tuple<int, int>(x, y), map);
+                bIsBuilding = false;
             }
-            /*   MessageBox.Show(comboBox1.SelectedValue.ToString());*/
-
-            map[x, y] = new Pixel((double)currentPlayer.Color.R / 255,
-                (double)currentPlayer.Color.G / 255,
-                (double)currentPlayer.Color.B / 255);
             pictureBox1.Image = Convertors.Photo2Bitmap(map);
+            /*   MessageBox.Show(comboBox1.SelectedValue.ToString());*/
+            /*     map[x, y] = new Pixel((double)currentPlayer.Color.R / 255,
+                     (double)currentPlayer.Color.G / 255,
+                     (double)currentPlayer.Color.B / 255);
+              */
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -85,6 +90,8 @@ namespace CSP_Game
                     playerIndex = 0;
                 currentPlayer = players[playerIndex];
                 Text = currentPlayer.Name;
+                PlayerTurn.OnTurnStart(currentPlayer);
+                label2.Text = currentPlayer.Treasure.ToString();
             }
         }
 
@@ -96,6 +103,11 @@ namespace CSP_Game
         private void button2_Click(object sender, EventArgs e)
         {
             bIsBuilding = true;
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

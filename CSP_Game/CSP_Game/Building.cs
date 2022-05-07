@@ -10,7 +10,17 @@ namespace CSP_Game
     public class Building : AnyObject
     {
     }
-
+    public class Capital : Building
+    {
+        public Capital(Player player, Tuple<int, int> coords)
+        {
+            Position = coords;
+            Border = 4;
+            HP = 500;
+            Color = player.Color;
+            Name = "Столица державы " + player.Name;
+        }
+    }
     public class MiningCamp : Building
     {
         public int GPS { get; set; }
