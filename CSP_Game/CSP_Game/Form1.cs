@@ -19,6 +19,7 @@ namespace CSP_Game
         List<Player> players;
         Player currentPlayer;
         bool bIsBuilding = false; // Check if user wants to build smth
+        Unit selectedUnit;        // Contains selected unit;
 
         public void InitializeMap()
         {
@@ -66,11 +67,41 @@ namespace CSP_Game
 
             int x = (int)Math.Floor((double)Cursor.Position.X / map.pixelWidth);
             int y = (int)Math.Floor((double)(Cursor.Position.Y - 30) / map.pixelHeight);
+
+            if (selectedUnit != null)
+            {
+                /*selectedUnit.Position = new Tuple<int, int>(x, y);*/
+                for (int i = x - selectedUnit.Border; i <= x + selectedUnit.Border; i++)
+                {
+                    for (int j = y - selectedUnit.Border; j <= y + selectedUnit.Border; j++)
+                    {
+                        map[i, j] = new Pixel((double)currentPlayer.Color.R / 255,
+                                              (double)currentPlayer.Color.G / 255,
+                                              (double)currentPlayer.Color.B / 255);
+                    }
+                }
+                PlayerTurn.MoveSelectedUnit(currentPlayer, selectedUnit, new Tuple<int, int>(x, y));
+                selectedUnit = null;
+            }
+            else
+            {
+                selectedUnit = PlayerTurn.ReturnSelectedUnit(currentPlayer, new Tuple<int, int>(x, y));
+            }
+
             if (bIsBuilding)
             {
                 var objectToBuild = (AnyObject)comboBox1.SelectedValue;
                 int border = objectToBuild.Border; 
-              PlayerTurn.Build(currentPlayer, objectToBuild, new Tuple<int, int>(x, y), map);
+                PlayerTurn.Build(currentPlayer, objectToBuild, new Tuple<int, int>(x, y));
+                for (int i = x - objectToBuild.Border; i <= x + objectToBuild.Border; i++)
+                {
+                    for (int j = y - objectToBuild.Border; j <= y + objectToBuild.Border; j++)
+                    {
+                        map[i, j] = new Pixel((double)currentPlayer.Color.R / 255,
+                                              (double)currentPlayer.Color.G / 255,
+                                              (double)currentPlayer.Color.B / 255);
+                    }
+                }
                 bIsBuilding = false;
             }
             pictureBox1.Image = Convertors.Photo2Bitmap(map);
