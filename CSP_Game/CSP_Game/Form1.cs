@@ -18,6 +18,7 @@ namespace CSP_Game
         int playerIndex;
         List<Player> players;
         Player currentPlayer;
+        bool bIsBuilding = false; // проверка на нажатие кнопки, если была нажата - нужно строить
 
         public void InitializeMap()
         {
@@ -47,17 +48,28 @@ namespace CSP_Game
             InitializeMap();
             InitializePlayer();
             pictureBox1.Image = Convertors.Photo2Bitmap(map);
-            List<Player> employes = new List<Player>{
-                new Player(Name = "Митька", Color.Green),
-                };
-            comboBox1.DataSource = employes;
+            AnyObject[] masterySelector = new AnyObject[]
+            {
+                new Tank(currentPlayer),
+                new RifleMan(currentPlayer),
+                new MiningCamp(currentPlayer),
+                new Tower(currentPlayer),
+            };
+            comboBox1.DataSource = masterySelector;
             comboBox1.DisplayMember = "Name";
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
         {
+
             int x = (int)Math.Floor((double)Cursor.Position.X / map.pixelWidth);
             int y = (int)Math.Floor((double)(Cursor.Position.Y - 30) / map.pixelHeight);
+            if (bIsBuilding)
+            {
+                PlayerTurn.Build(currentPlayer, (AnyObject)comboBox1.SelectedValue, new Tuple<int, int>(x, y));
+            }
+            /*   MessageBox.Show(comboBox1.SelectedValue.ToString());*/
+
             map[x, y] = new Pixel((double)currentPlayer.Color.R / 255,
                 (double)currentPlayer.Color.G / 255,
                 (double)currentPlayer.Color.B / 255);
@@ -79,6 +91,11 @@ namespace CSP_Game
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
           
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            bIsBuilding = true;
         }
     }
 }

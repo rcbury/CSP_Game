@@ -15,6 +15,7 @@ namespace CSP_Game
         {
             Name = name;
             Color = col;
+            Mastery = new Dictionary<Tuple<int, int>, AnyObject>();
         }
         public void AddMastery(Tuple<int, int> coords, AnyObject obj)
         {

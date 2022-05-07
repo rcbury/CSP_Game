@@ -9,7 +9,6 @@ namespace CSP_Game
 {
     public class Building : AnyObject
     {
-        protected Tuple<int, int> Position;
     }
 
     public class MiningCamp : Building

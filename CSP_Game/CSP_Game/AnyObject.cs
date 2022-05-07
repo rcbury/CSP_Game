@@ -9,6 +9,7 @@ namespace CSP_Game
 {
     public class AnyObject
     {
+        public Tuple<int, int> Position;
         public int Border { get; set; }
         public double HP { get; set; }
         public Color Color { get; set; }

@@ -8,7 +8,6 @@ namespace CSP_Game
 {
     public class Unit : AnyObject
     {
-        public Tuple<int, int> Position;
         public int MovingRange { get; set; }
         public int AttackRange { get; set; }
         public double Armor { get; set; }
