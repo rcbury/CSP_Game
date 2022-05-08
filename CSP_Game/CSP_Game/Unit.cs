@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 
 namespace CSP_Game
 {
@@ -26,7 +27,7 @@ namespace CSP_Game
             Color = player.Color;
             Price = 50;
             Name = "Танк";
-
+            Icon = Image.FromFile("tank.png");
             MovingRange = 3;
             bMovedThisTurn = true;
             AttackRange = 5;
@@ -46,7 +47,7 @@ namespace CSP_Game
             Color = player.Color;
             Price = 20;
             Name = "Снайпер";
-
+            Icon = Image.FromFile("rifleman.png");
             MovingRange = 5;
             bMovedThisTurn = true;
             AttackRange = 6;
