@@ -59,7 +59,7 @@ namespace CSP_Game
                 {
                     (pair.Value as Unit).bAttackedThisTurn = false;
                     (pair.Value as Unit).bMovedThisTurn = false;
-                    MessageBox.Show("Units have rested");
+                    MessageBox.Show("Units rested");
                 }
             }
         }
