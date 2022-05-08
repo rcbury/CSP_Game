@@ -47,7 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="PlayerTurn.cs" />
-    <Compile Include="MoveableObject.cs" />
+    <Compile Include="Building.cs" />
     <Compile Include="AnyObject.cs" />
     <Compile Include="Unit.cs" />
     <Compile Include="Convertors.cs" />
