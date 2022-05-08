@@ -29,7 +29,6 @@ namespace CSP_Game
         {
             unit.bAttackedThisTurn = true;
             attackedPlayer.TakeDamage(unit.Damage, position);
-            MessageBox.Show("attacked");
         }
         public static Unit ReturnSelectedUnit(Player player, Tuple<int, int> position)
         {

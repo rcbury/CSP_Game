@@ -141,9 +141,13 @@ namespace CSP_Game
             {
                 selectedUnit = PlayerTurn.ReturnSelectedUnit(currentPlayer, position);
                 if (selectedUnit != null)
-                    progressBar1.Value = (int)(selectedUnit.HP / selectedUnit.FullHP) * 100;
+                {
+                    progressBar1.Value = (int)(selectedUnit.HP / selectedUnit.FullHP * 100);
+                }
                 else
+                {
                     progressBar1.Value = 0;
+                }
             }
         }
         private bool AbleToMoveOrCreate(int x, int y, int offset)

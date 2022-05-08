@@ -116,6 +116,7 @@
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(203, 23);
             this.progressBar1.TabIndex = 8;
+            this.progressBar1.Value = 100;
             // 
             // label4
             // 
