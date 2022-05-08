@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using MyPhotoshop.Data;
 using MyPhotoshop;
@@ -50,12 +47,12 @@ namespace CSP_Game
             InitializeMap();
             InitializePlayers();
             pictureBox1.Image = Convertors.Photo2Bitmap(map);
-            AnyObject[] masterySelector = new AnyObject[]
+            Type[] masterySelector = new Type[]
             {
-                new Tank(p),
-                new RifleMan(p),
-                new MiningCamp(p),
-                new Tower(p),
+                typeof(Tank),
+                typeof(RifleMan),
+                typeof(Tower),
+                typeof(MiningCamp)
             };
             comboBox1.DataSource = masterySelector;
             comboBox1.DisplayMember = "Name";
@@ -128,41 +125,19 @@ namespace CSP_Game
             Пока я не знаю как это можно решить.
 
              */
-            if (selectedUnit != null)
-            {
-                for (int i = selectedUnit.Position.Item1 - selectedUnit.Border; i <= selectedUnit.Position.Item1 + selectedUnit.Border; i++)
-                {
-                    for (int j = selectedUnit.Position.Item2 - selectedUnit.Border; j <= selectedUnit.Position.Item2 + selectedUnit.Border; j++)
-                    {
-                        map[i, j] = new Pixel(1, 1, 1);
-                    }
-                }
-                for (int i = x - selectedUnit.Border; i <= x + selectedUnit.Border; i++)
-                {
-                    for (int j = y - selectedUnit.Border; j <= y + selectedUnit.Border; j++)
-                    {
-                        map[i, j] = new Pixel((double)currentPlayer.Color.R / 255,
-                                              (double)currentPlayer.Color.G / 255,
-                                              (double)currentPlayer.Color.B / 255);
-                    }
-                }
+            MoveOrSelectUnit(x, y);
+            TryBuild(x, y);
+            pictureBox1.Image = Convertors.Photo2Bitmap(map);
+        }
 
-                PlayerTurn.MoveSelectedUnit(currentPlayer, selectedUnit, new Tuple<int, int>(x, y));
-                selectedUnit = null;
-            }
-            else
-            {
-                selectedUnit = PlayerTurn.ReturnSelectedUnit(currentPlayer, new Tuple<int, int>(x, y));
-                if (selectedUnit != null)
-                    progressBar1.Value = (int)(selectedUnit.HP / selectedUnit.FullHP) * 100;
-                else
-                    progressBar1.Value = 0;
-            }
-
+        private void TryBuild(int x, int y)
+        {
             if (bIsBuilding)
             {
-                var objectToBuild = (AnyObject)comboBox1.SelectedValue;
-                int border = objectToBuild.Border;
+                Type selectedObject = (Type)comboBox1.SelectedValue;
+                AnyObject objectToBuild = (AnyObject)selectedObject
+                    .GetConstructor(new Type[] { typeof(Player), typeof(Tuple<int,int>) })
+                    .Invoke(new object[] { currentPlayer, new Tuple<int,int>(x,y) });
                 PlayerTurn.Build(currentPlayer, objectToBuild, new Tuple<int, int>(x, y));
                 for (int i = x - objectToBuild.Border; i <= x + objectToBuild.Border; i++)
                 {
@@ -175,11 +150,27 @@ namespace CSP_Game
                 }
                 bIsBuilding = false;
             }
-            pictureBox1.Image = Convertors.Photo2Bitmap(map);
-/*            map[x, y] = new Pixel((double)currentPlayer.Color.R / 255,
-                (double)currentPlayer.Color.G / 255,
-                (double)currentPlayer.Color.B / 255);*/
+        }
 
+        private void MoveOrSelectUnit(int x, int y)
+        {
+            if (selectedUnit != null)
+            {
+                Drawer drawer = new Drawer();
+                drawer.DrawObject(Color.FromArgb(255, 255, 255), selectedUnit.Border,
+                    selectedUnit.Position.Item1, selectedUnit.Position.Item2, map);
+                drawer.DrawObject(currentPlayer.Color, selectedUnit.Border, x, y, map);
+                PlayerTurn.MoveSelectedUnit(currentPlayer, selectedUnit, new Tuple<int, int>(x, y));
+                selectedUnit = null;
+            }
+            else
+            {
+                selectedUnit = PlayerTurn.ReturnSelectedUnit(currentPlayer, new Tuple<int, int>(x, y));
+                if (selectedUnit != null)
+                    progressBar1.Value = (int)(selectedUnit.HP / selectedUnit.FullHP) * 100;
+                else
+                    progressBar1.Value = 0;
+            }
         }
     }
 }
