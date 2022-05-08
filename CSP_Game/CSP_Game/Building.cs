@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,6 +20,7 @@ namespace CSP_Game
             FullHP = 500;
             Color = player.Color;
             Name = "Столица державы " + player.Name;
+            Icon = Image.FromFile("capital.png");
         }
     }
     public class MiningCamp : Building
@@ -35,6 +36,7 @@ namespace CSP_Game
             Border = 1;
             Color = player.Color;
             Price = 20;
+            Icon = Image.FromFile("miningcamp.png");
         }
     }
 
@@ -51,6 +53,7 @@ namespace CSP_Game
             Border = 2;
             Color = player.Color;
             Price = 50;
+            Icon = Image.FromFile("tower.png");
         }
     }
 }

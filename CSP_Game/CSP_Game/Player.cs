@@ -13,7 +13,7 @@ namespace CSP_Game
         public int Treasure { get; private set; } // Whole money that player can spend
         public int TotalGPS { get; private set; } // GPS - Gold Per Second
 
-        private Dictionary<Tuple<int, int>, AnyObject> Mastery; // Contains coordinates as a key, Unit/Building as value
+        public Dictionary<Tuple<int, int>, AnyObject> Mastery; // Contains coordinates as a key, Unit/Building as value
                                                                 // It allows faster removing or finding different objects, which coordinates can be
                                                                 // recognized via click
         public Player(string name, Color col) 

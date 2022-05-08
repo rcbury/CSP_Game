@@ -86,7 +86,8 @@ namespace CSP_Game
             var y = (int)Math.Floor((double)e.Y / map.pixelHeight);// Y relatively form
             MoveOrSelectUnit(x, y);
             TryBuild(x, y);
-            pictureBox1.Image = Convertors.Photo2Bitmap(map);
+            Bitmap mapImage =  Convertors.Photo2Bitmap(map);
+            pictureBox1.Image = Drawer.DrawMapWithIcons(players, mapImage);
         }
 
         private void TryBuild(int x, int y)
@@ -187,6 +188,11 @@ namespace CSP_Game
             {
                 return false;
             }
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
