@@ -16,5 +16,6 @@ namespace CSP_Game
         public Color Color { get; set; }
         public int Price { get; set; }
         public string Name { get; set; }
+        public Bitmap Icon { get; set; }
     }
 }
