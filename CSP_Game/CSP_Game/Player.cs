@@ -57,6 +57,20 @@ namespace CSP_Game
         {
             Treasure += value;
         }
+        public void TakeDamage(double damage, Tuple<int, int> coords)
+        {
+            if (Mastery.ContainsKey(coords))
+            {
+                if (Mastery[coords] is Unit)
+                {
+                    Mastery[coords].HP = Mastery[coords].HP - damage * (Mastery[coords] as Unit).Armor;
+                }
+                else
+                {
+                    Mastery[coords].HP = Mastery[coords].HP - damage;
+                }
+            }
+        }
         public void SetUnitsHaveRested()
         {
             foreach (var pair in Mastery)
