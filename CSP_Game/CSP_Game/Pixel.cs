@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 
@@ -19,7 +20,6 @@ namespace MyPhotoshop.Data
 			G = g;
 			B = b;
 		}
-
 			public double Check(double value)
 			{
 				if (value < 0 || value > 1) throw new ArgumentException();

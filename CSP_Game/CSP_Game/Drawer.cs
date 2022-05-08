@@ -11,7 +11,7 @@ namespace CSP_Game
 {
     public class Drawer
     {
-        public void DrawObject(Color col, int offset, int x, int y, Photo map) 
+        public static void DrawObject(Color col, int offset, int x, int y, Photo map) 
         {
             for (int i = x - offset; i <= x + offset; i++)
                 for (int j = y - offset; j <= y + offset; j++)

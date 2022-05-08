@@ -25,9 +25,11 @@ namespace CSP_Game
             player.AddMastery(position, x);
             /*            MessageBox.Show(newObject.ToString());*/
         }
-        public static void Attack()
+        public static void Attack(Unit unit, Player attackedPlayer, Tuple<int, int> position)
         {
-            
+            unit.bAttackedThisTurn = true;
+            attackedPlayer.TakeDamage(unit.Damage, position);
+            MessageBox.Show("attacked");
         }
         public static Unit ReturnSelectedUnit(Player player, Tuple<int, int> position)
         {
@@ -35,6 +37,7 @@ namespace CSP_Game
         }
         public static void MoveSelectedUnit(Player player, Unit x, Tuple<int, int> position)
         {
+            x.bMovedThisTurn = true;
             player.MoveSelectedUnit(x.Position, position);
         }
     }

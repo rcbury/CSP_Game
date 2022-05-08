@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 using MyPhotoshop.Data;
 
 namespace MyPhotoshop
@@ -10,7 +11,6 @@ namespace MyPhotoshop
 		public readonly int pixelWidth;
 		public readonly int pixelHeight;
 		private readonly Pixel[,] data;
-
 		public Pixel this[int x, int y]
 		{
 			get { return data[x, y]; }
