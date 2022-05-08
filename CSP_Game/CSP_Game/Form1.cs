@@ -20,6 +20,7 @@ namespace CSP_Game
         Player currentPlayer;
         bool bIsBuilding = false; // Check if user wants to build smth
         Unit selectedUnit;        // Contains selected unit;
+        Player p = new Player("UnitInit", default);
 
         public void InitializeMap()
         {
@@ -33,7 +34,7 @@ namespace CSP_Game
                 }
         }
 
-        public void InitializePlayer()
+        public void InitializePlayers()
         {
             players = new List<Player>();
             players.Add(new Player("Andrew", Color.Green));
@@ -47,14 +48,14 @@ namespace CSP_Game
         {
             InitializeComponent();
             InitializeMap();
-            InitializePlayer();
+            InitializePlayers();
             pictureBox1.Image = Convertors.Photo2Bitmap(map);
             AnyObject[] masterySelector = new AnyObject[]
             {
-                new Tank(currentPlayer),
-                new RifleMan(currentPlayer),
-                new MiningCamp(currentPlayer),
-                new Tower(currentPlayer),
+                new Tank(p),
+                new RifleMan(p),
+                new MiningCamp(p),
+                new Tower(p),
             };
             comboBox1.DataSource = masterySelector;
             comboBox1.DisplayMember = "Name";
@@ -152,6 +153,10 @@ namespace CSP_Game
             else
             {
                 selectedUnit = PlayerTurn.ReturnSelectedUnit(currentPlayer, new Tuple<int, int>(x, y));
+                if (selectedUnit != null)
+                    progressBar1.Value = (int)(selectedUnit.HP / selectedUnit.FullHP) * 100;
+                else
+                    progressBar1.Value = 0;
             }
 
             if (bIsBuilding)
