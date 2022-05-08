@@ -17,6 +17,7 @@ namespace CSP_Game
             Position = coords;
             Border = 4;
             HP = 500;
+            FullHP = 500;
             Color = player.Color;
             Name = "Столица державы " + player.Name;
         }
@@ -30,6 +31,7 @@ namespace CSP_Game
             GPS = 5;
             Position = coords;
             HP = 40;
+            FullHP = 40;
             Border = 1;
             Color = player.Color;
             Price = 20;
@@ -45,6 +47,7 @@ namespace CSP_Game
             Armor = 0.5;
             Position = coords;
             HP = 80;
+            FullHP = 80;
             Border = 2;
             Color = player.Color;
             Price = 50;

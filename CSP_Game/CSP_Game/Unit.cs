@@ -22,6 +22,7 @@ namespace CSP_Game
             Position = coords;
             Border = 1;
             HP = 100;
+            FullHP = 100;
             Color = player.Color;
             Price = 50;
             Name = "Танк";
@@ -41,6 +42,7 @@ namespace CSP_Game
             Position = coords;
             Border = 0;
             HP = 60;
+            FullHP = 60;
             Color = player.Color;
             Price = 20;
             Name = "Снайпер";
