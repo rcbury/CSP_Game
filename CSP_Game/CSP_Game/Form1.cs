@@ -133,6 +133,7 @@ namespace CSP_Game
                 else if (AbleToAttack(x, y, selectedUnit.Border) && !selectedUnit.bAttackedThisTurn)
                 {
                     PlayerTurn.Attack(selectedUnit, attackedPlayer, position);
+                    attackedPlayer = null;
                 }
                 selectedUnit = null;
             }
