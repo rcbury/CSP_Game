@@ -23,7 +23,7 @@ namespace CSP_Game
 
         public void InitializeMap()
         {
-            map = new Photo(80, 80);
+            map = new Photo(50, 50);
             pictureBox1.Height = map.height * map.pixelHeight;
             pictureBox1.Width = map.width * map.pixelWidth;
             for (int x = 0; x < map.width; x++)
@@ -65,73 +65,6 @@ namespace CSP_Game
         private void pictureBox1_Click(object sender, EventArgs e)
         {
 
-            int x = (int)Math.Floor((double)Cursor.Position.X / map.pixelWidth);
-            int y = (int)Math.Floor((double)(Cursor.Position.Y - 30) / map.pixelHeight);
-
-            /* Весь код ниже. Это надо либо выделить в отдельную сущность, которая будет отвечать за соответствие карты
-               всем объектам которые лежат в словарях владений игроков, либо оставить как есть но всё равно выделить некоторые части,
-            закрашивающие карту, поскольку они дублируются.
-            Основная проблема заключается в том, что фактически карта, которая отображается на форме, никак не связана логически с
-            владениями игроков. Это можно решить, вызывая каждый раз функцию обновления карты после какого либо хода пользователя
-            (поскольку на каждом ходу игроки так или иначе будут менять карту)
-            Также есть проблема с дебаггером - если поставить брейкпоинт куда угодно, то при попытке банально создать объект выдаёт 
-            исключение выхода за границы массива пикселей (из которых карта и состоит)
-
-            Проблема с координатами - юнит нормально строится и помещается на карту. После его первого перемещения он нормально перемещается
-            и его координаты в словаре владений игрока меняются. Но при попытке переместить его с новой точки в другое место выдается 
-            исключение, говорящее что элемента с такими координатами в словаре нет.
-            Все эти проблемы я списываю на  массив пикселей, он не работает как надо потому что мы натянули фотку на сетку и получили
-            в рот пипетку.
-
-            Также в будущем после завершения логики перемещений юнитов будет ещё одна проблема - если юнит стоит на краю другого юнита
-            (или строения), то после его перемещения нужно будет закрасить область, на которой его больше нет (чтобы не возникало границ, которые
-            по факту никто не занимает). Это заставит каждый юнит после перемещения "откусывать" границу у другого юнита или строения.
-            Пока я не знаю как это можно решить.
-
-             */
-
-            if (selectedUnit != null)
-            {
-                /*selectedUnit.Position = new Tuple<int, int>(x, y);*/
-                for (int i = x - selectedUnit.Border; i <= x + selectedUnit.Border; i++)
-                {
-                    for (int j = y - selectedUnit.Border; j <= y + selectedUnit.Border; j++)
-                    {
-                        map[i, j] = new Pixel((double)currentPlayer.Color.R / 255,
-                                              (double)currentPlayer.Color.G / 255,
-                                              (double)currentPlayer.Color.B / 255);
-                    }
-                }
-                PlayerTurn.MoveSelectedUnit(currentPlayer, selectedUnit, new Tuple<int, int>(x, y));
-                selectedUnit = null;
-            }
-            else
-            {
-                selectedUnit = PlayerTurn.ReturnSelectedUnit(currentPlayer, new Tuple<int, int>(x, y));
-            }
-
-            if (bIsBuilding)
-            {
-                var objectToBuild = (AnyObject)comboBox1.SelectedValue;
-                int border = objectToBuild.Border; 
-                PlayerTurn.Build(currentPlayer, objectToBuild, new Tuple<int, int>(x, y));
-                for (int i = x - objectToBuild.Border; i <= x + objectToBuild.Border; i++)
-                {
-                    for (int j = y - objectToBuild.Border; j <= y + objectToBuild.Border; j++)
-                    {
-                        map[i, j] = new Pixel((double)currentPlayer.Color.R / 255,
-                                              (double)currentPlayer.Color.G / 255,
-                                              (double)currentPlayer.Color.B / 255);
-                    }
-                }
-                bIsBuilding = false;
-            }
-            pictureBox1.Image = Convertors.Photo2Bitmap(map);
-            /*   MessageBox.Show(comboBox1.SelectedValue.ToString());*/
-            /*     map[x, y] = new Pixel((double)currentPlayer.Color.R / 255,
-                     (double)currentPlayer.Color.G / 255,
-                     (double)currentPlayer.Color.B / 255);
-              */
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -160,6 +93,87 @@ namespace CSP_Game
 
         private void label2_Click(object sender, EventArgs e)
         {
+
+        }
+
+        private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
+        {
+            var x = (int)Math.Floor((double)e.X / map.pixelWidth); // X relatively form
+            var y = (int)Math.Floor((double)e.Y / map.pixelHeight);// Y relatively form
+            /*
+            int x = (int)Math.Floor((double)(Cursor.Position.X / map.pixelWidth)-112);
+            int y = (int)Math.Floor((double)(Cursor.Position.Y - 30) / map.pixelHeight);*/
+            /*      MessageBox.Show(x.ToString());
+                  MessageBox.Show(y.ToString());*/
+
+            /* Весь код ниже. Это надо либо выделить в отдельную сущность, которая будет отвечать за соответствие карты
+               всем объектам которые лежат в словарях владений игроков, либо оставить как есть но всё равно выделить некоторые части,
+            закрашивающие карту, поскольку они дублируются.
+            Основная проблема заключается в том, что фактически карта, которая отображается на форме, никак не связана логически с
+            владениями игроков. Это можно решить, вызывая каждый раз функцию обновления карты после какого либо хода пользователя
+            (поскольку на каждом ходу игроки так или иначе будут менять карту)
+            Также есть проблема с дебаггером - если поставить брейкпоинт куда угодно, то при попытке банально создать объект выдаёт 
+            исключение выхода за границы массива пикселей (из которых карта и состоит)
+
+            Проблема с координатами - юнит нормально строится и помещается на карту. После его первого перемещения он нормально перемещается
+            и его координаты в словаре владений игрока меняются. Но при попытке переместить его с новой точки в другое место выдается 
+            исключение, говорящее что элемента с такими координатами в словаре нет.
+            Все эти проблемы я списываю на  массив пикселей, он не работает как надо потому что мы натянули фотку на сетку и получили
+            в рот пипетку.
+
+            Также в будущем после завершения логики перемещений юнитов будет ещё одна проблема - если юнит стоит на краю другого юнита
+            (или строения), то после его перемещения нужно будет закрасить область, на которой его больше нет (чтобы не возникало границ, которые
+            по факту никто не занимает). Это заставит каждый юнит после перемещения "откусывать" границу у другого юнита или строения.
+            Пока я не знаю как это можно решить.
+
+             */
+            if (selectedUnit != null)
+            {
+                for (int i = selectedUnit.Position.Item1 - selectedUnit.Border; i <= selectedUnit.Position.Item1 + selectedUnit.Border; i++)
+                {
+                    for (int j = selectedUnit.Position.Item2 - selectedUnit.Border; j <= selectedUnit.Position.Item2 + selectedUnit.Border; j++)
+                    {
+                        map[i, j] = new Pixel(1, 1, 1);
+                    }
+                }
+                for (int i = x - selectedUnit.Border; i <= x + selectedUnit.Border; i++)
+                {
+                    for (int j = y - selectedUnit.Border; j <= y + selectedUnit.Border; j++)
+                    {
+                        map[i, j] = new Pixel((double)currentPlayer.Color.R / 255,
+                                              (double)currentPlayer.Color.G / 255,
+                                              (double)currentPlayer.Color.B / 255);
+                    }
+                }
+
+                PlayerTurn.MoveSelectedUnit(currentPlayer, selectedUnit, new Tuple<int, int>(x, y));
+                selectedUnit = null;
+            }
+            else
+            {
+                selectedUnit = PlayerTurn.ReturnSelectedUnit(currentPlayer, new Tuple<int, int>(x, y));
+            }
+
+            if (bIsBuilding)
+            {
+                var objectToBuild = (AnyObject)comboBox1.SelectedValue;
+                int border = objectToBuild.Border;
+                PlayerTurn.Build(currentPlayer, objectToBuild, new Tuple<int, int>(x, y));
+                for (int i = x - objectToBuild.Border; i <= x + objectToBuild.Border; i++)
+                {
+                    for (int j = y - objectToBuild.Border; j <= y + objectToBuild.Border; j++)
+                    {
+                        map[i, j] = new Pixel((double)currentPlayer.Color.R / 255,
+                                              (double)currentPlayer.Color.G / 255,
+                                              (double)currentPlayer.Color.B / 255);
+                    }
+                }
+                bIsBuilding = false;
+            }
+            pictureBox1.Image = Convertors.Photo2Bitmap(map);
+/*            map[x, y] = new Pixel((double)currentPlayer.Color.R / 255,
+                (double)currentPlayer.Color.G / 255,
+                (double)currentPlayer.Color.B / 255);*/
 
         }
     }

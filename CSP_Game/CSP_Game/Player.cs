@@ -44,6 +44,7 @@ namespace CSP_Game
         public void MoveSelectedUnit(Tuple<int, int> coordsStart, Tuple<int, int> coordsEnd)
         {
             Mastery[coordsEnd] = Mastery[coordsStart];
+            Mastery[coordsEnd].Position = coordsEnd;
             Mastery.Remove(coordsStart);
         }
         public void UpdateTreasure(int value)
