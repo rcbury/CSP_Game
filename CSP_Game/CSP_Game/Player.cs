@@ -69,6 +69,7 @@ namespace CSP_Game
                 {
                     Mastery[coords].HP = Mastery[coords].HP - damage;
                 }
+                MessageBox.Show(Mastery[coords].HP.ToString());
             }
         }
         public void SetUnitsHaveRested()
