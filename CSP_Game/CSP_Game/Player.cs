@@ -24,7 +24,10 @@ namespace CSP_Game
         }
         public void AddMastery(Tuple<int, int> coords, AnyObject obj)
         {
-            Mastery.Add(coords, obj);
+            if (!Mastery.ContainsKey(coords))
+            {
+                Mastery.Add(coords, obj);
+            }
         }
         public void RemoveMastery(Tuple<int, int> coords)
         {
@@ -43,9 +46,12 @@ namespace CSP_Game
         }
         public void MoveSelectedUnit(Tuple<int, int> coordsStart, Tuple<int, int> coordsEnd)
         {
-            Mastery[coordsEnd] = Mastery[coordsStart];
-            Mastery[coordsEnd].Position = coordsEnd;
-            Mastery.Remove(coordsStart);
+            if (!coordsEnd.Equals(coordsStart))
+            {
+                AddMastery(coordsEnd, Mastery[coordsStart]);
+                Mastery[coordsEnd].Position = coordsEnd;
+                RemoveMastery(coordsStart);
+            }
         }
         public void UpdateTreasure(int value)
         {
