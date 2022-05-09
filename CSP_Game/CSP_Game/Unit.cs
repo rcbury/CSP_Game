@@ -18,10 +18,10 @@ namespace CSP_Game
         {
             Position = coords;
             Border = 1;
-            HP = 1;
+            HP = 100;
             FullHP = 100;
             Color = player.Color;
-            Price = 1;
+            Price = 40;
             Name = "Танк";
             Icon = Image.FromFile("tank.png");
 
