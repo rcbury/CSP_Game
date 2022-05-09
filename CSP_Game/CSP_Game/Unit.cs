@@ -22,18 +22,21 @@ namespace CSP_Game
         {
             Position = coords;
             Border = 1;
-            HP = 100;
+            HP = 1;
             FullHP = 100;
             Color = player.Color;
-            Price = 50;
+            Price = 1;
             Name = "Танк";
             Icon = Image.FromFile("tank.png");
+
             MovingRange = 3;
             bMovedThisTurn = true;
             AttackRange = 5;
             bAttackedThisTurn = true;
             Armor = 0.6;
             Damage = 20;
+
+            Rent = 5;
         }
     }
     public class RifleMan : Unit
@@ -48,12 +51,16 @@ namespace CSP_Game
             Price = 20;
             Name = "Снайпер";
             Icon = Image.FromFile("rifleman.png");
+
             MovingRange = 5;
             bMovedThisTurn = true;
             AttackRange = 6;
             bAttackedThisTurn = true;
             Armor = 0.9;
             Damage = 10;
+
+            Rent = 2;
+
 
         }
     }

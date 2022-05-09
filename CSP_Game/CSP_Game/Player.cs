@@ -14,30 +14,40 @@ namespace CSP_Game
         public int TotalGPS { get; private set; } // GPS - Gold Per Second
 
         public Dictionary<Tuple<int, int>, AnyObject> Mastery; // Contains coordinates as a key, Unit/Building as value
-                                                                // It allows faster removing or finding different objects, which coordinates can be
-                                                                // recognized via click
-        public Player(string name, Color col) 
+                                                               // It allows faster removing or finding different objects, which coordinates can be
+                                                               // recognized via click
+        public Player(string name, Color col)
         {
             Name = name;
             Color = col;
             Mastery = new Dictionary<Tuple<int, int>, AnyObject>();
+            TotalGPS = 5;
         }
         public void AddMastery(Tuple<int, int> coords, AnyObject obj)
         {
             if (!Mastery.ContainsKey(coords))
             {
                 Mastery.Add(coords, obj);
+                Treasure -= obj.Price;
+                if (obj is MiningCamp)
+                {
+                    TotalGPS += (obj as MiningCamp).GPS;
+                }
+                else
+                {
+                    TotalGPS -= obj.Rent;
+                }
             }
         }
         public void RemoveMastery(Tuple<int, int> coords)
         {
             Mastery.Remove(coords);
         }
-        public Unit ReturnSelectedUnit(Tuple<int, int> coords)
+        public AnyObject ReturnSelectedUnit(Tuple<int, int> coords)
         {
-            if (Mastery.ContainsKey(coords) && Mastery[coords] is Unit)
+            if (Mastery.ContainsKey(coords))
             {
-                return Mastery[coords] as Unit;
+                return Mastery[coords];
             }
             else
             {
@@ -53,11 +63,36 @@ namespace CSP_Game
                 RemoveMastery(coordsStart);
             }
         }
-        public void UpdateTreasure(int value)
+        public List<AnyObject> UpdateTreasure()
         {
-            Treasure += value;
+            Treasure = Treasure + TotalGPS;
+            List<AnyObject> destroyed = new List<AnyObject>();
+            if (Treasure < 0)
+            {
+                foreach (var pair in Mastery)
+                {
+                    if (pair.Value.Rent != 0)
+                    {
+                        if (TotalGPS + pair.Value.Rent <= 0)
+                        {
+                            TotalGPS += pair.Value.Rent;
+                            Treasure += pair.Value.Rent;
+                            destroyed.Add(pair.Value);
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
+                foreach (var unit in destroyed)
+                {
+                    RemoveMastery(unit.Position);
+                }
+            }
+            return destroyed.Count > 0 ? destroyed : null;
         }
-        public void TakeDamage(double damage, Tuple<int, int> coords)
+        public AnyObject TakeDamage(double damage, Tuple<int, int> coords)
         {
             if (Mastery.ContainsKey(coords))
             {
@@ -69,8 +104,15 @@ namespace CSP_Game
                 {
                     Mastery[coords].HP = Mastery[coords].HP - damage;
                 }
-                MessageBox.Show(Mastery[coords].HP.ToString());
+                if (Mastery[coords].HP <= 0)
+                {
+                    var destroyedObj = Mastery[coords];
+                    TotalGPS += destroyedObj.Rent;
+                    RemoveMastery(coords);
+                    return destroyedObj;
+                }
             }
+            return null;
         }
         public void SetUnitsHaveRested()
         {
@@ -80,7 +122,6 @@ namespace CSP_Game
                 {
                     (pair.Value as Unit).bAttackedThisTurn = false;
                     (pair.Value as Unit).bMovedThisTurn = false;
-                    MessageBox.Show("Units rested");
                 }
             }
         }

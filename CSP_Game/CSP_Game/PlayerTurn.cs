@@ -14,10 +14,11 @@ namespace CSP_Game
 {
     public class PlayerTurn
     {
-        public static void OnTurnStart(Player player)
+        public static List<AnyObject> OnTurnStart(Player player)
         {
-            player.UpdateTreasure(5);
+            var destroyed = player.UpdateTreasure();
             player.SetUnitsHaveRested();
+            return destroyed;
         }
         public static void Build(Player player, AnyObject x, Tuple<int, int> position)
         {
@@ -25,12 +26,13 @@ namespace CSP_Game
             player.AddMastery(position, x);
             /*            MessageBox.Show(newObject.ToString());*/
         }
-        public static void Attack(Unit unit, Player attackedPlayer, Tuple<int, int> position)
+        public static AnyObject Attack(Player attackedPlayer, Unit x, Tuple<int, int> position)
         {
-            unit.bAttackedThisTurn = true;
-            attackedPlayer.TakeDamage(unit.Damage, position);
+            x.bAttackedThisTurn = true;
+            return attackedPlayer.TakeDamage(x.Damage, position);
+
         }
-        public static Unit ReturnSelectedUnit(Player player, Tuple<int, int> position)
+        public static AnyObject ReturnSelectedUnit(Player player, Tuple<int, int> position)
         {
             return player.ReturnSelectedUnit(position);
         }
