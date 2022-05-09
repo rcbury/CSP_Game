@@ -21,8 +21,8 @@ namespace MyPhotoshop
 		{
 			this.width = width;
 			this.height = height;
-			this.pixelWidth = 15;
-			this.pixelHeight = 15;
+			this.pixelWidth = 25;
+			this.pixelHeight = 25;
 			data = new Pixel[width, height];
 		}
 	}

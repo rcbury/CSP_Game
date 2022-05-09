@@ -12,6 +12,7 @@ namespace CSP_Game
     public partial class Form1 : Form
     {
         Photo map;
+        Bitmap mapImage = new Bitmap("map.jpg");
         int playerIndex;
         List<Player> players;
         Player currentPlayer;
@@ -22,9 +23,10 @@ namespace CSP_Game
 
         public void InitializeMap()
         {
-            map = new Photo(50, 50);
+            map = new Photo(20, 20);
             pictureBox1.Height = map.height * map.pixelHeight;
             pictureBox1.Width = map.width * map.pixelWidth;
+            //Drawer.DrawObject(Color.White, map.width / 2, map.height / 2, map.width / 2, map.height / 2, map);
             for (int x = 0; x < map.width; x++)
                 for (int y = 0; y < map.height; y++)
                 {
@@ -47,7 +49,7 @@ namespace CSP_Game
             InitializeComponent();
             InitializeMap();
             InitializePlayers();
-            pictureBox1.Image = Convertors.Photo2Bitmap(map);
+            pictureBox1.Image = mapImage;
             Type[] masterySelector = new Type[]
             {
                 typeof(Tank),
@@ -86,8 +88,7 @@ namespace CSP_Game
             var y = (int)Math.Floor((double)e.Y / map.pixelHeight);// Y relatively form
             MoveOrSelectUnit(x, y);
             TryBuild(x, y);
-            Bitmap mapImage =  Convertors.Photo2Bitmap(map);
-            pictureBox1.Image = Drawer.DrawMapWithIcons(players, mapImage);
+            pictureBox1.Image = Drawer.DrawMapWithIcons(players, mapImage, map.pixelHeight);
         }
 
         private void TryBuild(int x, int y)
@@ -101,15 +102,16 @@ namespace CSP_Game
                 if (AbleToMoveOrCreate(x,y,objectToBuild.Border))
                 {
                     PlayerTurn.Build(currentPlayer, objectToBuild, new Tuple<int, int>(x, y));
-                    for (int i = x - objectToBuild.Border; i <= x + objectToBuild.Border; i++)
-                    {
-                        for (int j = y - objectToBuild.Border; j <= y + objectToBuild.Border; j++)
-                        {
-                            map[i, j] = new Pixel((double)currentPlayer.Color.R / 255,
-                                                  (double)currentPlayer.Color.G / 255,
-                                                  (double)currentPlayer.Color.B / 255);
-                        }
-                    }
+                    Drawer.DrawObject(currentPlayer.Color, objectToBuild.Border, x, y, map);
+                    //for (int i = x - objectToBuild.Border; i <= x + objectToBuild.Border; i++)
+                    //{
+                    //    for (int j = y - objectToBuild.Border; j <= y + objectToBuild.Border; j++)
+                    //    {
+                    //        map[i, j] = new Pixel((double)currentPlayer.Color.R / 255,
+                    //                              (double)currentPlayer.Color.G / 255,
+                    //                              (double)currentPlayer.Color.B / 255);
+                    //    }
+                    //}
                     bIsBuilding = false;
                 }
                 else

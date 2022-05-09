@@ -18,7 +18,14 @@ namespace CSP_Game
                     map[i, j] = new Pixel((double)col.R / 255, (double)col.G / 255, (double)col.B / 255);
         }
 
-        public static Bitmap DrawMapWithIcons(List<Player> players, Bitmap image) 
+        public static void DrawObject(Color col, int offsetX, int offsetY, int x, int y, Photo map) 
+        {
+            for (int i = x - offsetX; i <= x + offsetX; i++)
+                for (int j = y - offsetY; j <= y + offsetY; j++)
+                    map[i, j] = new Pixel((double)col.R / 255, (double)col.G / 255, (double)col.B / 255);
+        }
+
+        public static Bitmap DrawMapWithIcons(List<Player> players, Bitmap image, int cellSize) 
         {
             Bitmap icon;
             List<Tuple<Tuple<int, int>,AnyObject>> mapObjects = new List<Tuple<Tuple<int, int>, AnyObject>>();
@@ -31,10 +38,10 @@ namespace CSP_Game
                 var y = item.Item1.Item2;
                 icon = new Bitmap(item.Item2.Icon);
                 icon.MakeTransparent(Color.White);
-                var xs = x * 15;
-                var ys = y * 15;
-                for (int i = 0; i < 15; i++)
-                    for (int j = 0; j < 15; j++)
+                var xs = x * cellSize;
+                var ys = y * cellSize;
+                for (int i = 0; i < cellSize; i++)
+                    for (int j = 0; j < cellSize; j++)
                     {
                         var px = icon.GetPixel(i, j);
                         if (px.R == 0 && px.G == 0 && px.B == 0)
