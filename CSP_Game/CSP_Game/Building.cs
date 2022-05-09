@@ -12,7 +12,7 @@ namespace CSP_Game
         {
             Position = coords;
             Border = 4;
-            HP = 1;
+            HP = 500;
             FullHP = 500;
             Color = player.Color;
             Price = 0;
