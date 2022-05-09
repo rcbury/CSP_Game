@@ -17,5 +17,6 @@ namespace CSP_Game
         public int Price { get; set; }
         public string Name { get; set; }
         public Image Icon { get; set; }
+        public int Rent { get; set; }
     }
 }

@@ -23,37 +23,41 @@ namespace CSP_Game
             Icon = Image.FromFile("capital.png");
         }
     }
-    public class MiningCamp : Building
+    public class MiningCamp : Building // Вынесение объектов увеличивающих GPS позволит добавлять другие объекты связанные с GPS'ом (Например, таможня или банк)
     {
         public int GPS { get; set; }
         public MiningCamp(Player player, Tuple<int,int> coords = null)
         {
-            Name = "Рудник";
-            GPS = 5;
             Position = coords;
+            Border = 1;
             HP = 40;
             FullHP = 40;
-            Border = 1;
             Color = player.Color;
             Price = 20;
+            Name = "Рудник";
             Icon = Image.FromFile("miningcamp.png");
+            Rent = 0;
+
+            GPS = 5;
         }
     }
 
-    public class Tower : Building
+    public class Tower : Building // Наследование этого типа и типов юнитов от типа "Armored" позволило бы не писать код несколько раз
     {
         public double Armor { get; set; }
         public Tower(Player player, Tuple<int, int> coords = null)
         {
-            Name = "Башня";
-            Armor = 0.5;
             Position = coords;
+            Border = 2;
             HP = 80;
             FullHP = 80;
-            Border = 2;
             Color = player.Color;
             Price = 50;
+            Name = "Башня";
             Icon = Image.FromFile("tower.png");
+            Rent = 15;
+
+            Armor = 0.5;
         }
     }
 }

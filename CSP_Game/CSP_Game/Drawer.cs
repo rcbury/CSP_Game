@@ -17,7 +17,13 @@ namespace CSP_Game
                 for (int j = y - offset; j <= y + offset; j++)
                     map[i, j] = new Pixel((double)col.R / 255, (double)col.G / 255, (double)col.B / 255);
         }
-
+        public static void ClearArea(int offset, int x, int y, Photo map)
+        {
+            var col = Color.FromArgb(255, 255, 255);
+            for (int i = x - offset; i <= x + offset; i++)
+                for (int j = y - offset; j <= y + offset; j++)
+                    map[i, j] = new Pixel((double)col.R / 255, (double)col.G / 255, (double)col.B / 255);
+        }
         public static Bitmap DrawMapWithIcons(List<Player> players, Bitmap image) 
         {
             Bitmap icon;
@@ -31,10 +37,10 @@ namespace CSP_Game
                 var y = item.Item1.Item2;
                 icon = new Bitmap(item.Item2.Icon);
                 icon.MakeTransparent(Color.White);
-                var xs = x * 15;
-                var ys = y * 15;
-                for (int i = 0; i < 15; i++)
-                    for (int j = 0; j < 15; j++)
+                var xs = x * 20;
+                var ys = y * 20;
+                for (int i = 0; i < 20; i++)
+                    for (int j = 0; j < 20; j++)
                     {
                         var px = icon.GetPixel(i, j);
                         if (px.R == 0 && px.G == 0 && px.B == 0)

@@ -16,9 +16,9 @@ namespace CSP_Game
         List<Player> players;
         Player currentPlayer;
         bool bIsBuilding = false; // Check if user wants to build smth
-        Unit selectedUnit;        // Contains selected unit;
-        Player attackedPlayer;    // Contains attacked player for one turn;
-        Player p = new Player("UnitInit", default);
+        AnyObject selectedUnit;   // Contains selected object
+        AnyObject buildingObject; // Contains object for building
+        Player attackedPlayer;    // Contains attacked player for one turn
 
         public void InitializeMap()
         {
@@ -34,9 +34,11 @@ namespace CSP_Game
 
         public void InitializePlayers()
         {
-            players = new List<Player>();
-            players.Add(new Player("Andrew", Color.Green));
-            players.Add(new Player("Roman", Color.Crimson));
+            players = new List<Player>
+            {
+                new Player("Andrew", Color.Green),
+                new Player("Roman", Color.Crimson)
+            };
             playerIndex = 0;
             currentPlayer = players[playerIndex];
             Text = currentPlayer.Name;
@@ -48,7 +50,8 @@ namespace CSP_Game
             InitializeMap();
             InitializePlayers();
             pictureBox1.Image = Convertors.Photo2Bitmap(map);
-            Type[] masterySelector = new Type[]
+            Type[] masterySelector = new Type[] // Если автоматизировать инициализацию массива типов для выбора пользователем, то можно будет избежать
+                                                // постоянно растущего массива в результате расширения игры
             {
                 typeof(Tank),
                 typeof(RifleMan),
@@ -58,6 +61,8 @@ namespace CSP_Game
             comboBox1.DataSource = masterySelector;
             comboBox1.DisplayMember = "Name";
             PlayerTurn.OnTurnStart(currentPlayer);
+            selectedUnit = null;
+            UpdateObjectInfo();
             label2.Text = currentPlayer.Treasure.ToString();
         }
 
@@ -70,7 +75,17 @@ namespace CSP_Game
                     playerIndex = 0;
                 currentPlayer = players[playerIndex];
                 Text = currentPlayer.Name;
-                PlayerTurn.OnTurnStart(currentPlayer);
+                var deadUnits = PlayerTurn.OnTurnStart(currentPlayer);
+                if (deadUnits != null)
+                {
+                    RemoveDeadUnits(deadUnits);
+                    Bitmap mapImage = Convertors.Photo2Bitmap(map);
+                    pictureBox1.Image = mapImage;
+                }
+
+                selectedUnit = null;
+                attackedPlayer = null;
+                buildingObject = null;
                 label2.Text = currentPlayer.Treasure.ToString();
             }
         }
@@ -78,100 +93,98 @@ namespace CSP_Game
         private void button2_Click(object sender, EventArgs e)
         {
             bIsBuilding = true;
+            selectedUnit = null;
         }
 
         private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
         {
             var x = (int)Math.Floor((double)e.X / map.pixelWidth); // X relatively form
             var y = (int)Math.Floor((double)e.Y / map.pixelHeight);// Y relatively form
-            MoveOrSelectUnit(x, y);
-            TryBuild(x, y);
-            Bitmap mapImage =  Convertors.Photo2Bitmap(map);
-            pictureBox1.Image = Drawer.DrawMapWithIcons(players, mapImage);
-        }
-
-        private void TryBuild(int x, int y)
-        {
-            if (bIsBuilding)
+            var position = new Tuple<int, int>(x, y);
+            if (selectedUnit is Unit)
             {
-                Type selectedObject = (Type)comboBox1.SelectedValue;
-                AnyObject objectToBuild = (AnyObject)selectedObject
-                    .GetConstructor(new Type[] { typeof(Player), typeof(Tuple<int,int>) })
-                    .Invoke(new object[] { currentPlayer, new Tuple<int,int>(x,y) });
-                if (AbleToMoveOrCreate(x,y,objectToBuild.Border))
+                if (AbleToAttack(x, y) && !(selectedUnit as Unit).bAttackedThisTurn)
                 {
-                    PlayerTurn.Build(currentPlayer, objectToBuild, new Tuple<int, int>(x, y));
-                    for (int i = x - objectToBuild.Border; i <= x + objectToBuild.Border; i++)
+                    var attackedObj = PlayerTurn.Attack(attackedPlayer, selectedUnit as Unit, position);
+                    if (attackedObj != null)
                     {
-                        for (int j = y - objectToBuild.Border; j <= y + objectToBuild.Border; j++)
-                        {
-                            map[i, j] = new Pixel((double)currentPlayer.Color.R / 255,
-                                                  (double)currentPlayer.Color.G / 255,
-                                                  (double)currentPlayer.Color.B / 255);
-                        }
+                        Drawer.ClearArea(attackedObj.Border, attackedObj.Position.Item1, attackedObj.Position.Item2, map);
                     }
+                }
+                else if(AbleToMoveOrCreate(x, y, selectedUnit.Border) && !(selectedUnit as Unit).bMovedThisTurn)
+                {
+                    Drawer.ClearArea(selectedUnit.Border, selectedUnit.Position.Item1, selectedUnit.Position.Item2, map);
+                    Drawer.DrawObject(currentPlayer.Color, selectedUnit.Border, x, y, map);
+                    PlayerTurn.MoveSelectedUnit(currentPlayer, selectedUnit as Unit, position);
+                }
+                TrySelect(position);
+            }
+            else
+            {
+                if (bIsBuilding && TryBuild(x, y))
+                {
+                    Drawer.DrawObject(currentPlayer.Color, buildingObject.Border, x, y, map);
+                    PlayerTurn.Build(currentPlayer, buildingObject, new Tuple<int, int>(x, y));
                     bIsBuilding = false;
                 }
                 else
                 {
-                    MessageBox.Show("Здесь строить нельзя!");
+                    TrySelect(position);
                 }
             }
+            UpdateObjectInfo();
+/*            MoveOrSelectUnit(x, y);
+            TryBuild(x, y);*/
+            Bitmap mapImage =  Convertors.Photo2Bitmap(map);
+            pictureBox1.Image = /*Drawer.DrawMapWithIcons(players,*/ mapImage/*)*/;
         }
 
-        private void MoveOrSelectUnit(int x, int y)
+        private bool TryBuild(int x, int y)
         {
-            var position = new Tuple<int, int>(x, y);
-            if (selectedUnit != null)
+            bool able = false;
+            Type selectedObject = (Type)comboBox1.SelectedValue;
+            AnyObject objectToBuild = (AnyObject)selectedObject
+                .GetConstructor(new Type[] { typeof(Player), typeof(Tuple<int, int>) })
+                .Invoke(new object[] { currentPlayer, new Tuple<int, int>(x, y) });
+            if (AbleToMoveOrCreate(x, y, objectToBuild.Border))
             {
-                if (AbleToMoveOrCreate(x,y,selectedUnit.Border) && !selectedUnit.bMovedThisTurn)
+                if (objectToBuild.Price <= currentPlayer.Treasure)
                 {
-                    Drawer.DrawObject(Color.FromArgb(255, 255, 255), selectedUnit.Border,
-                        selectedUnit.Position.Item1, selectedUnit.Position.Item2, map);
-                    Drawer.DrawObject(currentPlayer.Color, selectedUnit.Border, x, y, map);
-                    PlayerTurn.MoveSelectedUnit(currentPlayer, selectedUnit, position);
-                }
-                else if (AbleToAttack(x, y, selectedUnit.Border) && !selectedUnit.bAttackedThisTurn)
-                {
-                    PlayerTurn.Attack(selectedUnit, attackedPlayer, position);
-                    attackedPlayer = null;
-                }
-                selectedUnit = null;
-            }
-            else
-            {
-                selectedUnit = PlayerTurn.ReturnSelectedUnit(currentPlayer, position);
-                if (selectedUnit != null)
-                {
-                    progressBar1.Value = (int)(selectedUnit.HP / selectedUnit.FullHP * 100);
+                    buildingObject = objectToBuild;
+                    able = true;
                 }
                 else
                 {
-                    progressBar1.Value = 0;
+                    MessageBox.Show("Не хватает средств!");
                 }
+       
+            }else{
+                MessageBox.Show("Постройка здесь невозможна!");
+                able = false;
             }
+            return able;
         }
         private bool AbleToMoveOrCreate(int x, int y, int offset)
         {
             bool able = true;
-            for (int i = x - offset; i <= x + offset; i++)
-            {
-                for (int j = y - offset; j <= y + offset; j++)
+                for (int i = x - offset; i <= x + offset; i++)
                 {
-                    if (!(map[i, j].R*255 == Color.White.R && 
-                        map[i, j].G*255 == Color.White.G && 
-                        map[i, j].B*255 == Color.White.B))
+                    for (int j = y - offset; j <= y + offset; j++)
                     {
-                        able = false;
-                        break;
+                        if (!(map[i, j].R * 255 == Color.White.R &&
+                            map[i, j].G * 255 == Color.White.G &&
+                            map[i, j].B * 255 == Color.White.B))
+                        {
+                            able = false;
+                            break;
+                        }
                     }
-                }
             }
             return able;
         }
-        private bool AbleToAttack(int x, int y, int offset)
+        private bool AbleToAttack(int x, int y)
         {
-            if(map[x,y].R * 255 != currentPlayer.Color.R && map[x, y].G * 255 != currentPlayer.Color.G && map[x, y].B * 255 != currentPlayer.Color.B)
+            if(map[x,y].R * 255 != currentPlayer.Color.R && map[x, y].G * 255 != currentPlayer.Color.G && map[x, y].B * 255 != currentPlayer.Color.B && !(selectedUnit as Unit).bAttackedThisTurn)
             {
                 var attackedPlayer = players.Where(player => player.Color.R == map[x, y].R*255 && player.Color.G == map[x, y].G * 255 && player.Color.B == map[x, y].B * 255);
                 if(attackedPlayer.Count() != 0)
@@ -189,14 +202,62 @@ namespace CSP_Game
                 return false;
             }
         }
+        private void TrySelect(Tuple<int,int> coords)
+        {
+            if (map[coords.Item1, coords.Item2].R * 255 == currentPlayer.Color.R && map[coords.Item1, coords.Item2].G * 255 == currentPlayer.Color.G && map[coords.Item1, coords.Item2].B * 255 == currentPlayer.Color.B)
+            {
+                var selected = PlayerTurn.ReturnSelectedUnit(currentPlayer, new Tuple<int, int>(coords.Item1, coords.Item2));
+                if (selected != null)
+                {
+                    selectedUnit = selected;
+                    progressBar1.Value = (int)(selectedUnit.HP / selectedUnit.FullHP * 100);
+                }
+                else
+                {
+                    selectedUnit = null;
+                    progressBar1.Value = 0;
+                }
+            }
+
+        }
+        private void RemoveDeadUnits(List<AnyObject> deadUnits)
+        {
+            foreach(AnyObject destroyedObj in deadUnits)
+            {
+                Drawer.ClearArea(destroyedObj.Border, destroyedObj.Position.Item1, destroyedObj.Position.Item2, map);
+            }
+        }
+        private void UpdateObjectInfo()
+        {
+            if (selectedUnit != null)
+            {
+                if (selectedUnit is Unit)
+                {
+                    label6.Text = selectedUnit.Name;
+                    label7.Text = selectedUnit.Position.ToString();
+                    label9.Text = (selectedUnit as Unit).Damage.ToString();
+                    label11.Text = (selectedUnit as Unit).bMovedThisTurn == false ? "Да" : "Нет";
+                    label13.Text = (selectedUnit as Unit).bAttackedThisTurn == false ? "Да" : "Нет";
+                }
+                else
+                {
+                    label6.Text = selectedUnit.Name;
+                    label7.Text = selectedUnit.Position.ToString();
+                    label9.Text = "0";
+                    label11.Text = "Нет";
+                    label13.Text = "Нет";
+                }
+            }
+            label2.Text = currentPlayer.Treasure.ToString();
+        }
         /* 
-        1. Автоотрисовка столиц для двух игроков
-        2. Все проверки перемещения и атаки юнитов
-        3. Реализовать логику зданий
-        4. Реализовать взаимодействие юнитов и зданий
-        5. Попытаться сбалансировать (для себя)
-        6. Реализовать более точную логику перемещения юнитов с учётом того, что путь не всегда чист
-            (Возможные варианты = забить, алгоритм поиска кратчайшего пути, etc...)
-        */
+1. Автоотрисовка столиц для двух игроков
+2. Все проверки перемещения и атаки юнитов
+3. Реализовать логику зданий
+4. Реализовать взаимодействие юнитов и зданий
+5. Попытаться сбалансировать (для себя)
+6. Реализовать более точную логику перемещения юнитов с учётом того, что путь не всегда чист
+(Возможные варианты = забить, алгоритм поиска кратчайшего пути, etc...)
+*/
     }
 }
