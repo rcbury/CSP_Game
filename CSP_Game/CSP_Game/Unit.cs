@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Drawing;
 
 namespace CSP_Game
 {
-    public class Unit : AnyObject, IArmored
+    public class Unit : AnyObject
     {
         public int MovingRange { get; set; }
         public bool bMovedThisTurn { get; set; }

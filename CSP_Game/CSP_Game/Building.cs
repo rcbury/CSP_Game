@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace CSP_Game
 {
@@ -8,23 +12,21 @@ namespace CSP_Game
     }
     public class Capital : Building
     {
-        public Capital(Player player, Tuple<int, int> coords = null)
+        public Capital(Player player, Tuple<int, int> coords)
         {
             Position = coords;
             Border = 4;
-            HP = 1;
+            HP = 500;
             FullHP = 500;
             Color = player.Color;
-            Price = 0;
             Name = "Столица державы " + player.Name;
             Icon = Image.FromFile("capital.png");
-            Rent = 0;
         }
     }
     public class MiningCamp : Building // Вынесение объектов увеличивающих GPS позволит добавлять другие объекты связанные с GPS'ом (Например, таможня или банк)
     {
         public int GPS { get; set; }
-        public MiningCamp(Player player, Tuple<int, int> coords = null)
+        public MiningCamp(Player player, Tuple<int,int> coords = null)
         {
             Position = coords;
             Border = 1;
@@ -40,9 +42,9 @@ namespace CSP_Game
         }
     }
 
-    public class Tower : Building, IArmored
+    public class Tower : Building // Наследование этого типа и типов юнитов от типа "Armored" позволило бы не писать код несколько раз
     {
-
+        public double Armor { get; set; }
         public Tower(Player player, Tuple<int, int> coords = null)
         {
             Position = coords;
@@ -57,6 +59,5 @@ namespace CSP_Game
 
             Armor = 0.5;
         }
-        public double Armor { get; set; }
     }
 }

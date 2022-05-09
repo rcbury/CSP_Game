@@ -1,6 +1,7 @@
-﻿using System;
+﻿using System.Drawing;
+using System;
 using System.Collections.Generic;
-using System.Drawing;
+using System.Windows.Forms;
 
 namespace CSP_Game
 {
@@ -8,7 +9,7 @@ namespace CSP_Game
     {
         public string Name { get; }
         public Color Color { get; }
-        public bool IsAlive { get; private set; } = true;
+        public bool IsAlive { get; }
         public int Treasure { get; private set; } // Whole money that player can spend
         public int TotalGPS { get; private set; } // GPS - Gold Per Second
 
@@ -57,8 +58,7 @@ namespace CSP_Game
         {
             if (!coordsEnd.Equals(coordsStart))
             {
-                /*  AddMastery(coordsEnd, Mastery[coordsStart]);*/
-                Mastery.Add(coordsEnd, Mastery[coordsStart]);
+                AddMastery(coordsEnd, Mastery[coordsStart]);
                 Mastery[coordsEnd].Position = coordsEnd;
                 RemoveMastery(coordsStart);
             }
@@ -96,9 +96,9 @@ namespace CSP_Game
         {
             if (Mastery.ContainsKey(coords))
             {
-                if (Mastery[coords] is IArmored)
+                if (Mastery[coords] is Unit)
                 {
-                    Mastery[coords].HP = Mastery[coords].HP - damage * (Mastery[coords] as IArmored).Armor;
+                    Mastery[coords].HP = Mastery[coords].HP - damage * (Mastery[coords] as Unit).Armor;
                 }
                 else
                 {
@@ -107,10 +107,6 @@ namespace CSP_Game
                 if (Mastery[coords].HP <= 0)
                 {
                     var destroyedObj = Mastery[coords];
-                    if (destroyedObj is Capital)
-                    {
-                        IsAlive = false;
-                    }
                     TotalGPS += destroyedObj.Rent;
                     RemoveMastery(coords);
                     return destroyedObj;

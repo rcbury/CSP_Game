@@ -1,11 +1,11 @@
-﻿using MyPhotoshop;
-using MyPhotoshop.Data;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using MyPhotoshop.Data;
+using MyPhotoshop;
 
 namespace CSP_Game
 {
@@ -39,17 +39,6 @@ namespace CSP_Game
                 new Player("Andrew", Color.Green),
                 new Player("Roman", Color.Crimson)
             };
-            Tuple<int, int>[] playersCapitals = new Tuple<int, int>[]
-            {
-                new Tuple<int, int>(4, 4),
-                new Tuple<int, int>(45, 45),
-            };
-            foreach (var player in players)
-            {
-                var capitalCoords = playersCapitals[players.IndexOf(player)];
-                PlayerTurn.Build(player, new Capital(player, capitalCoords), capitalCoords);
-                Drawer.DrawObject(player.Color, 4, capitalCoords.Item1, capitalCoords.Item2, map);
-            }
             playerIndex = 0;
             currentPlayer = players[playerIndex];
             Text = currentPlayer.Name;
@@ -58,7 +47,6 @@ namespace CSP_Game
         public Form1()
         {
             InitializeComponent();
-            WindowState = FormWindowState.Maximized;
             InitializeMap();
             InitializePlayers();
             pictureBox1.Image = Convertors.Photo2Bitmap(map);
@@ -100,11 +88,6 @@ namespace CSP_Game
                 buildingObject = null;
                 label2.Text = currentPlayer.Treasure.ToString();
             }
-            else
-            {
-                MessageBox.Show("Игра окончена! Война привела " + players.Where(player => player.IsAlive == true).First().Name + " к победе");
-            }
-            UpdateObjectInfo();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -128,7 +111,7 @@ namespace CSP_Game
                         Drawer.ClearArea(attackedObj.Border, attackedObj.Position.Item1, attackedObj.Position.Item2, map);
                     }
                 }
-                else if (AbleToMoveOrCreate(x, y, selectedUnit.Border) && !(selectedUnit as Unit).bMovedThisTurn)
+                else if(AbleToMoveOrCreate(x, y, selectedUnit.Border) && !(selectedUnit as Unit).bMovedThisTurn)
                 {
                     Drawer.ClearArea(selectedUnit.Border, selectedUnit.Position.Item1, selectedUnit.Position.Item2, map);
                     Drawer.DrawObject(currentPlayer.Color, selectedUnit.Border, x, y, map);
@@ -150,9 +133,9 @@ namespace CSP_Game
                 }
             }
             UpdateObjectInfo();
-            /*            MoveOrSelectUnit(x, y);
-                        TryBuild(x, y);*/
-            Bitmap mapImage = Convertors.Photo2Bitmap(map);
+/*            MoveOrSelectUnit(x, y);
+            TryBuild(x, y);*/
+            Bitmap mapImage =  Convertors.Photo2Bitmap(map);
             pictureBox1.Image = /*Drawer.DrawMapWithIcons(players,*/ mapImage/*)*/;
         }
 
@@ -174,10 +157,8 @@ namespace CSP_Game
                 {
                     MessageBox.Show("Не хватает средств!");
                 }
-
-            }
-            else
-            {
+       
+            }else{
                 MessageBox.Show("Постройка здесь невозможна!");
                 able = false;
             }
@@ -186,27 +167,27 @@ namespace CSP_Game
         private bool AbleToMoveOrCreate(int x, int y, int offset)
         {
             bool able = true;
-            for (int i = x - offset; i <= x + offset; i++)
-            {
-                for (int j = y - offset; j <= y + offset; j++)
+                for (int i = x - offset; i <= x + offset; i++)
                 {
-                    if (!(map[i, j].R * 255 == Color.White.R &&
-                        map[i, j].G * 255 == Color.White.G &&
-                        map[i, j].B * 255 == Color.White.B))
+                    for (int j = y - offset; j <= y + offset; j++)
                     {
-                        able = false;
-                        break;
+                        if (!(map[i, j].R * 255 == Color.White.R &&
+                            map[i, j].G * 255 == Color.White.G &&
+                            map[i, j].B * 255 == Color.White.B))
+                        {
+                            able = false;
+                            break;
+                        }
                     }
-                }
             }
             return able;
         }
         private bool AbleToAttack(int x, int y)
         {
-            if (map[x, y].R * 255 != currentPlayer.Color.R && map[x, y].G * 255 != currentPlayer.Color.G && map[x, y].B * 255 != currentPlayer.Color.B && !(selectedUnit as Unit).bAttackedThisTurn)
+            if(map[x,y].R * 255 != currentPlayer.Color.R && map[x, y].G * 255 != currentPlayer.Color.G && map[x, y].B * 255 != currentPlayer.Color.B && !(selectedUnit as Unit).bAttackedThisTurn)
             {
-                var attackedPlayer = players.Where(player => player.Color.R == map[x, y].R * 255 && player.Color.G == map[x, y].G * 255 && player.Color.B == map[x, y].B * 255);
-                if (attackedPlayer.Count() != 0)
+                var attackedPlayer = players.Where(player => player.Color.R == map[x, y].R*255 && player.Color.G == map[x, y].G * 255 && player.Color.B == map[x, y].B * 255);
+                if(attackedPlayer.Count() != 0)
                 {
                     this.attackedPlayer = attackedPlayer.First();
                     return true;
@@ -221,7 +202,7 @@ namespace CSP_Game
                 return false;
             }
         }
-        private void TrySelect(Tuple<int, int> coords)
+        private void TrySelect(Tuple<int,int> coords)
         {
             if (map[coords.Item1, coords.Item2].R * 255 == currentPlayer.Color.R && map[coords.Item1, coords.Item2].G * 255 == currentPlayer.Color.G && map[coords.Item1, coords.Item2].B * 255 == currentPlayer.Color.B)
             {
@@ -241,7 +222,7 @@ namespace CSP_Game
         }
         private void RemoveDeadUnits(List<AnyObject> deadUnits)
         {
-            foreach (AnyObject destroyedObj in deadUnits)
+            foreach(AnyObject destroyedObj in deadUnits)
             {
                 Drawer.ClearArea(destroyedObj.Border, destroyedObj.Position.Item1, destroyedObj.Position.Item2, map);
             }
@@ -267,21 +248,16 @@ namespace CSP_Game
                     label13.Text = "Нет";
                 }
             }
-            else
-            {
-                label6.Text = "";
-                label7.Text = "";
-                label9.Text = "";
-                label11.Text = "";
-                label13.Text = "";
-            }
             label2.Text = currentPlayer.Treasure.ToString();
         }
         /* 
-1. Все проверки перемещения и атаки юнитов
-2. Реализовать более точную логику перемещения юнитов с учётом того, что путь не всегда чист
+1. Автоотрисовка столиц для двух игроков
+2. Все проверки перемещения и атаки юнитов
+3. Реализовать логику зданий
+4. Реализовать взаимодействие юнитов и зданий
+5. Попытаться сбалансировать (для себя)
+6. Реализовать более точную логику перемещения юнитов с учётом того, что путь не всегда чист
 (Возможные варианты = забить, алгоритм поиска кратчайшего пути, etc...)
-3. Если предыдущий пункт слишком сложен, можно его не делать, хватит и проверки
 */
     }
 }
