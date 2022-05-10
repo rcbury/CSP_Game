@@ -1,36 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using MyPhotoshop.Data;
-using MyPhotoshop;
 
 namespace CSP_Game
 {
-    public class PlayerTurn
+    public class PlayerTurn // является контроллером, поскольку передаёт данные модели после обработки и возвращает главному контроллеру результат работы
+                            // также выполняет подготовку данных перед передачей модели
     {
-        public static void OnTurnStart(Player player)
+        public static List<AnyObject> OnTurnStart(Player player)
         {
-            player.UpdateTreasure(5);
+            var destroyed = player.UpdateTreasure();
             player.SetUnitsHaveRested();
+            return destroyed;
         }
         public static void Build(Player player, AnyObject x, Tuple<int, int> position)
         {
             x.Position = position;
             player.AddMastery(position, x);
-            /*            MessageBox.Show(newObject.ToString());*/
         }
-        public static void Attack(Unit unit, Player attackedPlayer, Tuple<int, int> position)
+        public static AnyObject Attack(Player attackedPlayer, Unit x, Tuple<int, int> position)
         {
-            unit.bAttackedThisTurn = true;
-            attackedPlayer.TakeDamage(unit.Damage, position);
+            x.bAttackedThisTurn = true;
+            return attackedPlayer.TakeDamage(x.Damage, position);
+
         }
-        public static Unit ReturnSelectedUnit(Player player, Tuple<int, int> position)
+        public static AnyObject ReturnSelectedUnit(Player player, Tuple<int, int> position)
         {
             return player.ReturnSelectedUnit(position);
         }

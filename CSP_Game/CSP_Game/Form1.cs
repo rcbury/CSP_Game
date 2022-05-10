@@ -1,32 +1,33 @@
-﻿using System;
+﻿using MyPhotoshop;
+using MyPhotoshop.Data;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using MyPhotoshop.Data;
-using MyPhotoshop;
 
 namespace CSP_Game
 {
-    public partial class Form1 : Form
+    public partial class Form1 : Form // является контроллером, поскольку отвечает за связь модели и отображения.
+                                      // реализует логику, позволяющую пользователю обращаться к модели посредством отображения
+                                      // выводит всю информацию посредством класса Drawer (обращение к выводу)
+                                      // выводит все уведомления посредством класса Notifier
     {
         Photo map;
-        Bitmap mapImage = new Bitmap("map.jpg");
         int playerIndex;
         List<Player> players;
         Player currentPlayer;
         bool bIsBuilding = false; // Check if user wants to build smth
-        Unit selectedUnit;        // Contains selected unit;
-        Player attackedPlayer;    // Contains attacked player for one turn;
-        Player p = new Player("UnitInit", default);
+        AnyObject selectedUnit;   // Contains selected object
+        AnyObject buildingObject; // Contains object for building
+        Player attackedPlayer;    // Contains attacked player for one turn
 
         public void InitializeMap()
         {
             map = new Photo(30, 30);
             pictureBox1.Height = map.height * map.pixelHeight;
             pictureBox1.Width = map.width * map.pixelWidth;
-            //Drawer.DrawObject(Color.White, map.width / 2, map.height / 2, map.width / 2, map.height / 2, map);
             for (int x = 0; x < map.width; x++)
                 for (int y = 0; y < map.height; y++)
                 {
@@ -36,9 +37,22 @@ namespace CSP_Game
 
         public void InitializePlayers()
         {
-            players = new List<Player>();
-            players.Add(new Player("Andrew", Color.Green));
-            players.Add(new Player("Roman", Color.Crimson));
+            players = new List<Player>
+            {
+                new Player("Andrew", Color.Green),
+                new Player("Roman", Color.Crimson)
+            };
+            Tuple<int, int>[] playersCapitals = new Tuple<int, int>[]
+            {
+                new Tuple<int, int>(4, 4),
+                new Tuple<int, int>(25, 24),
+            };
+            foreach (var player in players)
+            {
+                var capitalCoords = playersCapitals[players.IndexOf(player)];
+                PlayerTurn.Build(player, new Capital(player, capitalCoords), capitalCoords);
+                Drawer.DrawObject(player.Color, 4, capitalCoords.Item1, capitalCoords.Item2, map);
+            }
             playerIndex = 0;
             currentPlayer = players[playerIndex];
             Text = currentPlayer.Name;
@@ -47,9 +61,9 @@ namespace CSP_Game
         public Form1()
         {
             InitializeComponent();
+            WindowState = FormWindowState.Maximized;
             InitializeMap();
             InitializePlayers();
-            pictureBox1.Image = mapImage;
             Type[] masterySelector = new Type[]
             {
                 typeof(Tank),
@@ -60,7 +74,9 @@ namespace CSP_Game
             comboBox1.DataSource = masterySelector;
             comboBox1.DisplayMember = "Name";
             PlayerTurn.OnTurnStart(currentPlayer);
-            label2.Text = currentPlayer.Treasure.ToString();
+            pictureBox1.Image = Drawer.DrawMapWithIcons(players,Convertors.Photo2Bitmap(map), map.pixelHeight);
+            selectedUnit = null;
+            UpdateObjectInfo();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -72,87 +88,124 @@ namespace CSP_Game
                     playerIndex = 0;
                 currentPlayer = players[playerIndex];
                 Text = currentPlayer.Name;
-                PlayerTurn.OnTurnStart(currentPlayer);
+                var deadUnits = PlayerTurn.OnTurnStart(currentPlayer);
+                if (deadUnits != null)
+                {
+                    RemoveDeadUnits(deadUnits);
+                    Bitmap mapImage = Convertors.Photo2Bitmap(map);
+                    pictureBox1.Image = Drawer.DrawMapWithIcons(players,Convertors.Photo2Bitmap(map), map.pixelHeight);
+                }
+
+                selectedUnit = null;
+                attackedPlayer = null;
+                buildingObject = null;
                 label2.Text = currentPlayer.Treasure.ToString();
             }
+            else
+            {
+                Notifier.NotifyPlayer("Игра окончена! Война привела " + players.Where(player => player.IsAlive == true).First().Name + " к победе");
+            }
+            UpdateObjectInfo();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             bIsBuilding = true;
+            selectedUnit = null;
         }
 
         private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
         {
             var x = (int)Math.Floor((double)e.X / map.pixelWidth); // X relatively form
             var y = (int)Math.Floor((double)e.Y / map.pixelHeight);// Y relatively form
-            MoveOrSelectUnit(x, y);
-            TryBuild(x, y);
-            pictureBox1.Image = Drawer.DrawMapWithIcons(players, mapImage, map.pixelHeight);
-        }
-
-        private void TryBuild(int x, int y)
-        {
-            if (bIsBuilding)
+            var position = new Tuple<int, int>(x, y);
+            if (selectedUnit is Unit)
             {
-                Type selectedObject = (Type)comboBox1.SelectedValue;
-                AnyObject objectToBuild = (AnyObject)selectedObject
-                    .GetConstructor(new Type[] { typeof(Player), typeof(Tuple<int,int>) })
-                    .Invoke(new object[] { currentPlayer, new Tuple<int,int>(x,y) });
-                if (AbleToMoveOrCreate(x,y,objectToBuild.Border))
+                if (AbleToAttack(x, y) && !(selectedUnit as Unit).bAttackedThisTurn)
                 {
-                    PlayerTurn.Build(currentPlayer, objectToBuild, new Tuple<int, int>(x, y));
-                    Drawer.DrawObject(currentPlayer.Color, objectToBuild.Border, x, y, map);
-                    //for (int i = x - objectToBuild.Border; i <= x + objectToBuild.Border; i++)
-                    //{
-                    //    for (int j = y - objectToBuild.Border; j <= y + objectToBuild.Border; j++)
-                    //    {
-                    //        map[i, j] = new Pixel((double)currentPlayer.Color.R / 255,
-                    //                              (double)currentPlayer.Color.G / 255,
-                    //                              (double)currentPlayer.Color.B / 255);
-                    //    }
-                    //}
+                    var attackedObj = PlayerTurn.Attack(attackedPlayer, selectedUnit as Unit, position);
+                    if (attackedObj != null)
+                    {
+                        if (attackedObj.HP <= 0)
+                        {
+                            Drawer.ClearArea(attackedObj.Border, attackedObj.Position.Item1, attackedObj.Position.Item2, map);
+                            Notifier.AddPlayerAction(ref listBox1, currentPlayer.Name + " уничтожил\n" + attackedObj.Name);
+                        }
+                        else
+                        {
+                            Notifier.AddPlayerAction(ref listBox1,
+                                currentPlayer.Name +
+                                " попадает по " +
+                                attackedObj.Name +
+                                " и наносит " +
+                                (selectedUnit as Unit).Damage +
+                                "\nурона");
+                        }
+                    }
+                    else
+                    {
+                        Notifier.AddPlayerAction(ref listBox1,
+                            currentPlayer.Name +
+                            " атакует клетку " +
+                            position.ToString() +
+                            " и промахивается");
+                    }
+                }
+                else if (AbleToMoveOrCreate(x, y, selectedUnit.Border) && !(selectedUnit as Unit).bMovedThisTurn)
+                {
+                    Drawer.ClearArea(selectedUnit.Border, selectedUnit.Position.Item1, selectedUnit.Position.Item2, map);
+                    Drawer.DrawObject(currentPlayer.Color, selectedUnit.Border, x, y, map);
+                    PlayerTurn.MoveSelectedUnit(currentPlayer, selectedUnit as Unit, position);
+                    Notifier.AddPlayerAction(ref listBox1, currentPlayer.Name + " переместил " + selectedUnit.Name + "\nв точку " + position.ToString());
+                }
+                TrySelect(position);
+            }
+            else
+            {
+                if (bIsBuilding && TryBuild(x, y))
+                {
+                    Drawer.DrawObject(currentPlayer.Color, buildingObject.Border, x, y, map);
+                    PlayerTurn.Build(currentPlayer, buildingObject, new Tuple<int, int>(x, y));
+                    Notifier.AddPlayerAction(ref listBox1, currentPlayer.Name + " построил " + buildingObject.Name + ",\nкоординаты: " + position.ToString());
                     bIsBuilding = false;
                 }
                 else
                 {
-                    MessageBox.Show("Здесь строить нельзя!");
+                    TrySelect(position);
                 }
             }
+            UpdateObjectInfo();
+            pictureBox1.Image = Drawer.DrawMapWithIcons(players, Convertors.Photo2Bitmap(map), map.pixelHeight);
         }
 
-        private void MoveOrSelectUnit(int x, int y)
+        private bool TryBuild(int x, int y)
         {
-            var position = new Tuple<int, int>(x, y);
-            if (selectedUnit != null)
+            bool able = false;
+            Type selectedObject = (Type)comboBox1.SelectedValue;
+            AnyObject objectToBuild = (AnyObject)selectedObject
+                .GetConstructor(new Type[] { typeof(Player), typeof(Tuple<int, int>) })
+                .Invoke(new object[] { currentPlayer, new Tuple<int, int>(x, y) });
+            if (AbleToMoveOrCreate(x, y, objectToBuild.Border))
             {
-                if (AbleToMoveOrCreate(x,y,selectedUnit.Border) && !selectedUnit.bMovedThisTurn)
+                if (objectToBuild.Price <= currentPlayer.Treasure)
                 {
-                    Drawer.DrawObject(Color.FromArgb(255, 255, 255), selectedUnit.Border,
-                        selectedUnit.Position.Item1, selectedUnit.Position.Item2, map);
-                    Drawer.DrawObject(currentPlayer.Color, selectedUnit.Border, x, y, map);
-                    PlayerTurn.MoveSelectedUnit(currentPlayer, selectedUnit, position);
-                }
-                else if (AbleToAttack(x, y, selectedUnit.Border) && !selectedUnit.bAttackedThisTurn)
-                {
-                    PlayerTurn.Attack(selectedUnit, attackedPlayer, position);
-                    attackedPlayer = null;
-                }
-                selectedUnit = null;
-            }
-            else
-            {
-                selectedUnit = PlayerTurn.ReturnSelectedUnit(currentPlayer, position);
-                if (selectedUnit != null)
-                {
-                    progressBar1.Value = (int)(selectedUnit.HP / selectedUnit.FullHP * 100);
+                    buildingObject = objectToBuild;
+                    able = true;
                 }
                 else
                 {
-                    progressBar1.Value = 0;
+                    Notifier.NotifyPlayer("Не хватает средств!");
                 }
+
             }
+            else
+            {
+                Notifier.NotifyPlayer("Постройка здесь невозможна!");
+                able = false;
+            }
+            return able;
         }
+
         private bool AbleToMoveOrCreate(int x, int y, int offset)
         {
             bool able = true;
@@ -160,9 +213,9 @@ namespace CSP_Game
             {
                 for (int j = y - offset; j <= y + offset; j++)
                 {
-                    if (!(map[i, j].R*255 == Color.White.R && 
-                        map[i, j].G*255 == Color.White.G && 
-                        map[i, j].B*255 == Color.White.B))
+                    if (!(map[i, j].R * 255 == Color.White.R &&
+                        map[i, j].G * 255 == Color.White.G &&
+                        map[i, j].B * 255 == Color.White.B))
                     {
                         able = false;
                         break;
@@ -171,12 +224,13 @@ namespace CSP_Game
             }
             return able;
         }
-        private bool AbleToAttack(int x, int y, int offset)
+
+        private bool AbleToAttack(int x, int y)
         {
-            if(map[x,y].R * 255 != currentPlayer.Color.R && map[x, y].G * 255 != currentPlayer.Color.G && map[x, y].B * 255 != currentPlayer.Color.B)
+            if (map[x, y].R * 255 != currentPlayer.Color.R && map[x, y].G * 255 != currentPlayer.Color.G && map[x, y].B * 255 != currentPlayer.Color.B && !(selectedUnit as Unit).bAttackedThisTurn)
             {
-                var attackedPlayer = players.Where(player => player.Color.R == map[x, y].R*255 && player.Color.G == map[x, y].G * 255 && player.Color.B == map[x, y].B * 255);
-                if(attackedPlayer.Count() != 0)
+                var attackedPlayer = players.Where(player => player.Color.R == map[x, y].R * 255 && player.Color.G == map[x, y].G * 255 && player.Color.B == map[x, y].B * 255);
+                if (attackedPlayer.Count() != 0)
                 {
                     this.attackedPlayer = attackedPlayer.First();
                     return true;
@@ -192,9 +246,84 @@ namespace CSP_Game
             }
         }
 
+        private void TrySelect(Tuple<int, int> coords)
+        {
+            if (map[coords.Item1, coords.Item2].R * 255 == currentPlayer.Color.R && map[coords.Item1, coords.Item2].G * 255 == currentPlayer.Color.G && map[coords.Item1, coords.Item2].B * 255 == currentPlayer.Color.B)
+            {
+                var selected = PlayerTurn.ReturnSelectedUnit(currentPlayer, new Tuple<int, int>(coords.Item1, coords.Item2));
+                if (selected != null)
+                {
+                    selectedUnit = selected;
+                    progressBar1.Value = (int)(selectedUnit.HP / selectedUnit.FullHP * 100);
+                }
+                else
+                {
+                    selectedUnit = null;
+                    progressBar1.Value = 0;
+                }
+            }
+        }
+
+        private void RemoveDeadUnits(List<AnyObject> deadUnits)
+        {
+            foreach (AnyObject destroyedObj in deadUnits)
+            {
+                Drawer.ClearArea(destroyedObj.Border, destroyedObj.Position.Item1, destroyedObj.Position.Item2, map);
+            }
+        }
+
+        private void UpdateObjectInfo()
+        {
+            string[] info;
+            Label[] labels = new Label[] { label2, label6, label7, label9, label11, label13, label16 };
+            if (selectedUnit != null)
+            {
+                if (selectedUnit is Unit)
+                {
+                    info = new string[] {
+                        currentPlayer.Treasure.ToString(),
+                        selectedUnit.Name,
+                        selectedUnit.Position.ToString(), 
+                        (selectedUnit as Unit).Damage.ToString(), 
+                        (selectedUnit as Unit).bMovedThisTurn == false ? "Да" : "Нет",
+                        (selectedUnit as Unit).bAttackedThisTurn == false ? "Да" : "Нет",
+                        currentPlayer.TotalGPT.ToString()
+                    };
+                }
+                else
+                {
+                    info = new string[] {
+                        currentPlayer.Treasure.ToString(),
+                        selectedUnit.Name,
+                        selectedUnit.Position.ToString(),
+                        "0", 
+                        "Нет", 
+                        "Нет",
+                        currentPlayer.TotalGPT.ToString()
+                    };
+                }
+            }
+            else
+            {
+                info = new string[] { currentPlayer.Treasure.ToString(), "", "", "", "", "", label16.Text = currentPlayer.TotalGPT.ToString() };
+            }
+            Notifier.UpdatePlayerInfo(selectedUnit, info, labels);
+        }
+
         private void Form1_Load(object sender, EventArgs e)
         {
 
         }
+
+        private void label12_Click(object sender, EventArgs e)
+        {
+
+        }
+        /* 
+        1. Все проверки перемещения и атаки юнитов
+        2. Реализовать более точную логику перемещения юнитов с учётом того, что путь не всегда чист
+        (Возможные варианты = забить, алгоритм поиска кратчайшего пути, etc...)
+        3. Если предыдущий пункт слишком сложен, можно его не делать, хватит и проверки
+        */
     }
 }

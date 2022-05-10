@@ -1,18 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Drawing;
-using MyPhotoshop;
+﻿using MyPhotoshop;
 using MyPhotoshop.Data;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
 
 namespace CSP_Game
 {
-    public class Drawer
+    public class Drawer // является моделью, поскольку логически связывает содержимое владений игрока и отображение карты, и отображает 
+                        // изменение карты после каждого хода игрока на форме
     {
-        public static void DrawObject(Color col, int offset, int x, int y, Photo map) 
+        public static void DrawObject(Color col, int offset, int x, int y, Photo map)
         {
+            for (int i = x - offset; i <= x + offset; i++)
+                for (int j = y - offset; j <= y + offset; j++)
+                    map[i, j] = new Pixel((double)col.R / 255, (double)col.G / 255, (double)col.B / 255);
+        }
+        public static void ClearArea(int offset, int x, int y, Photo map)
+        {
+            var col = Color.FromArgb(255, 255, 255);
             for (int i = x - offset; i <= x + offset; i++)
                 for (int j = y - offset; j <= y + offset; j++)
                     map[i, j] = new Pixel((double)col.R / 255, (double)col.G / 255, (double)col.B / 255);
@@ -46,8 +51,6 @@ namespace CSP_Game
                         var px = icon.GetPixel(i, j);
                         if (px.R == 255 && px.G == 255 && px.B == 255)
                             px = image.GetPixel(xs + i, ys + j);
-                        else
-                            px = col;
                         image.SetPixel(xs + i, ys + j, Color.FromArgb(px.R, px.G, px.B));
                     }
             }
