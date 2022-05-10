@@ -6,7 +6,8 @@ using System.Drawing;
 
 namespace CSP_Game
 {
-    public class Drawer
+    public class Drawer // является моделью, поскольку логически связывает содержимое владений игрока и отображение карты, и отображает 
+                        // изменение карты после каждого хода игрока на форме
     {
         public static void DrawObject(Color col, int offset, int x, int y, Photo map)
         {

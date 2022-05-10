@@ -2,7 +2,8 @@ using MyPhotoshop.Data;
 
 namespace MyPhotoshop
 {
-    public class Photo
+    public class Photo // является моделью, поскольку реализует логику, важную для вывода (отображение, View) всей информации на экран
+                       // позволяет отрисовать в начале игры карту с необходимыми параметрами и позволяет обращаться к каждому пикселю через индексацию
     {
         public readonly int width;
         public readonly int height;

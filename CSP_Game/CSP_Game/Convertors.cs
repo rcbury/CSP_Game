@@ -4,7 +4,7 @@ using System.Drawing;
 
 namespace MyPhotoshop
 {
-    public static class Convertors
+    public static class Convertors // является моделью, поскольку реализует одну из главных задач - конвертирует картинку в массив пикселей заданного размера
     {
         public static Photo Bitmap2Photo(Bitmap bmp)
         {

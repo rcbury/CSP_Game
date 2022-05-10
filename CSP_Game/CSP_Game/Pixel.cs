@@ -3,7 +3,7 @@
 namespace MyPhotoshop.Data
 {
 
-    public struct Pixel
+    public struct Pixel // является моделью, поскольку реализует логику, отвечающую за правильную отрисовку карты
     {
         double r;
         double g;

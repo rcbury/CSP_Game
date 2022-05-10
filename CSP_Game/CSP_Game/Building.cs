@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace CSP_Game
 {
-    public class Building : AnyObject
+    public class Building : AnyObject // является простой сущностью, с которой в дальнейшем могут взаимодействовать модель и контроллер
     {
     }
     public class Capital : Building
@@ -16,14 +16,14 @@ namespace CSP_Game
             FullHP = 500;
             Color = player.Color;
             Price = 0;
-            Name = "Столица державы " + player.Name;
+            Name = "Столица " + player.Name;
             Icon = Image.FromFile("capital.png");
             Rent = 0;
         }
     }
-    public class MiningCamp : Building // Вынесение объектов увеличивающих GPS позволит добавлять другие объекты связанные с GPS'ом (Например, таможня или банк)
+    public class MiningCamp : Building // Вынесение объектов увеличивающих GPT позволит добавлять другие объекты связанные с GPT'ом (Например, таможня или банк)
     {
-        public int GPS { get; set; }
+        public int GPT { get; set; }
         public MiningCamp(Player player, Tuple<int, int> coords = null)
         {
             Position = coords;
@@ -36,13 +36,12 @@ namespace CSP_Game
             Icon = Image.FromFile("miningcamp.png");
             Rent = 0;
 
-            GPS = 5;
+            GPT = 5;
         }
     }
-
     public class Tower : Building, IArmored
     {
-
+        public double Armor { get; set; }
         public Tower(Player player, Tuple<int, int> coords = null)
         {
             Position = coords;
@@ -57,6 +56,5 @@ namespace CSP_Game
 
             Armor = 0.5;
         }
-        public double Armor { get; set; }
     }
 }

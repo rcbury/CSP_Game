@@ -3,7 +3,8 @@ using System.Drawing;
 
 namespace CSP_Game
 {
-    public class AnyObject
+    public class AnyObject // представляет собой сущность, с которой в дальнейшем может взаимодействовать модель, поскольку предоставляет набор свойств необходимых для того чтобы код не дублировался
+                           // и сущности можно было логически разделить
     {
         public Tuple<int, int> Position;
         public int Border { get; set; }

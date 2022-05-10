@@ -3,7 +3,8 @@ using System.Collections.Generic;
 
 namespace CSP_Game
 {
-    public class PlayerTurn
+    public class PlayerTurn // является контроллером, поскольку передаёт данные модели после обработки и возвращает главному контроллеру результат работы
+                            // также выполняет подготовку данных перед передачей модели
     {
         public static List<AnyObject> OnTurnStart(Player player)
         {

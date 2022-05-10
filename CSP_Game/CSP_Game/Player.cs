@@ -4,13 +4,13 @@ using System.Drawing;
 
 namespace CSP_Game
 {
-    public class Player
+    public class Player // является моделью, поскольку реализует всю логику, связанную с пользователем, его владениями и прочим
     {
         public string Name { get; }
         public Color Color { get; }
         public bool IsAlive { get; private set; } = true;
         public int Treasure { get; private set; } // Whole money that player can spend
-        public int TotalGPS { get; private set; } // GPS - Gold Per Second
+        public int TotalGPT { get; private set; } // GPT - Gold Per Turn
 
         public Dictionary<Tuple<int, int>, AnyObject> Mastery; // Contains coordinates as a key, Unit/Building as value
                                                                // It allows faster removing or finding different objects, which coordinates can be
@@ -20,7 +20,7 @@ namespace CSP_Game
             Name = name;
             Color = col;
             Mastery = new Dictionary<Tuple<int, int>, AnyObject>();
-            TotalGPS = 5;
+            TotalGPT = 5;
         }
         public void AddMastery(Tuple<int, int> coords, AnyObject obj)
         {
@@ -30,11 +30,11 @@ namespace CSP_Game
                 Treasure -= obj.Price;
                 if (obj is MiningCamp)
                 {
-                    TotalGPS += (obj as MiningCamp).GPS;
+                    TotalGPT += (obj as MiningCamp).GPT;
                 }
                 else
                 {
-                    TotalGPS -= obj.Rent;
+                    TotalGPT -= obj.Rent;
                 }
             }
         }
@@ -57,7 +57,7 @@ namespace CSP_Game
         {
             if (!coordsEnd.Equals(coordsStart))
             {
-                /*  AddMastery(coordsEnd, Mastery[coordsStart]);*/
+                /*  AddMastery(coordsEnd, Mastery[coordsStart]); */
                 Mastery.Add(coordsEnd, Mastery[coordsStart]);
                 Mastery[coordsEnd].Position = coordsEnd;
                 RemoveMastery(coordsStart);
@@ -65,7 +65,7 @@ namespace CSP_Game
         }
         public List<AnyObject> UpdateTreasure()
         {
-            Treasure = Treasure + TotalGPS;
+            Treasure = Treasure + TotalGPT;
             List<AnyObject> destroyed = new List<AnyObject>();
             if (Treasure < 0)
             {
@@ -73,9 +73,9 @@ namespace CSP_Game
                 {
                     if (pair.Value.Rent != 0)
                     {
-                        if (TotalGPS + pair.Value.Rent <= 0)
+                        if (TotalGPT + pair.Value.Rent <= 0)
                         {
-                            TotalGPS += pair.Value.Rent;
+                            TotalGPT += pair.Value.Rent;
                             Treasure += pair.Value.Rent;
                             destroyed.Add(pair.Value);
                         }
@@ -111,14 +111,21 @@ namespace CSP_Game
                     {
                         IsAlive = false;
                     }
-                    TotalGPS += destroyedObj.Rent;
+                    TotalGPT += destroyedObj.Rent;
                     RemoveMastery(coords);
                     return destroyedObj;
                 }
+                else
+                {
+                    return Mastery[coords];
+                }
             }
-            return null;
+            else
+            {
+                return null;
+            }
         }
-        public void SetUnitsHaveRested()
+            public void SetUnitsHaveRested()
         {
             foreach (var pair in Mastery)
             {
