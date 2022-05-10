@@ -15,6 +15,7 @@ namespace CSP_Game
                                       // выводит все уведомления посредством класса Notifier
     {
         Photo map;
+        Bitmap mapImage = new Bitmap("map.jpg");
         int playerIndex;
         List<Player> players;
         Player currentPlayer;
@@ -25,7 +26,7 @@ namespace CSP_Game
 
         public void InitializeMap()
         {
-            map = new Photo(50, 50);
+            map = new Photo(30, 30);
             pictureBox1.Height = map.height * map.pixelHeight;
             pictureBox1.Width = map.width * map.pixelWidth;
             for (int x = 0; x < map.width; x++)
@@ -64,9 +65,8 @@ namespace CSP_Game
             WindowState = FormWindowState.Maximized;
             InitializeMap();
             InitializePlayers();
-            pictureBox1.Image = Convertors.Photo2Bitmap(map);
-            Type[] masterySelector = new Type[] // Если автоматизировать инициализацию массива типов для выбора пользователем, то можно будет избежать
-                                                // постоянно растущего массива в результате расширения игры
+            pictureBox1.Image = mapImage;
+            Type[] masterySelector = new Type[]
             {
                 typeof(Tank),
                 typeof(RifleMan),

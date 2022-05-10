@@ -16,13 +16,13 @@ namespace MyPhotoshop
             set { data[x, y] = value; }
         }
 
-        public Photo(int width, int height)
-        {
-            this.width = width;
-            this.height = height;
-            this.pixelWidth = 20;
-            this.pixelHeight = 20;
-            data = new Pixel[width, height];
-        }
-    }
+		public Photo(int width, int height)
+		{
+			this.width = width;
+			this.height = height;
+			this.pixelWidth = 25;
+			this.pixelHeight = 25;
+			data = new Pixel[width, height];
+		}
+	}
 }
