@@ -23,7 +23,7 @@ namespace CSP_Game
 
         public void InitializeMap()
         {
-            map = new Photo(20, 20);
+            map = new Photo(30, 30);
             pictureBox1.Height = map.height * map.pixelHeight;
             pictureBox1.Width = map.width * map.pixelWidth;
             //Drawer.DrawObject(Color.White, map.width / 2, map.height / 2, map.width / 2, map.height / 2, map);
