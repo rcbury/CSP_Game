@@ -15,7 +15,6 @@ namespace CSP_Game
                                       // выводит все уведомления посредством класса Notifier
     {
         Photo map;
-        Bitmap mapImage = new Bitmap("map.jpg");
         int playerIndex;
         List<Player> players;
         Player currentPlayer;
@@ -65,7 +64,6 @@ namespace CSP_Game
             WindowState = FormWindowState.Maximized;
             InitializeMap();
             InitializePlayers();
-            pictureBox1.Image = mapImage;
             Type[] masterySelector = new Type[]
             {
                 typeof(Tank),
@@ -76,6 +74,7 @@ namespace CSP_Game
             comboBox1.DataSource = masterySelector;
             comboBox1.DisplayMember = "Name";
             PlayerTurn.OnTurnStart(currentPlayer);
+            pictureBox1.Image = Drawer.DrawMapWithIcons(players,Convertors.Photo2Bitmap(map), map.pixelHeight);
             selectedUnit = null;
             UpdateObjectInfo();
         }
@@ -94,7 +93,7 @@ namespace CSP_Game
                 {
                     RemoveDeadUnits(deadUnits);
                     Bitmap mapImage = Convertors.Photo2Bitmap(map);
-                    pictureBox1.Image = mapImage;
+                    pictureBox1.Image = Drawer.DrawMapWithIcons(players,Convertors.Photo2Bitmap(map), map.pixelHeight);
                 }
 
                 selectedUnit = null;
@@ -130,7 +129,7 @@ namespace CSP_Game
                         if (attackedObj.HP <= 0)
                         {
                             Drawer.ClearArea(attackedObj.Border, attackedObj.Position.Item1, attackedObj.Position.Item2, map);
-                            Notifier.AddPlayerAction(ref listBox1, currentPlayer.Name + " уничтожил " + attackedObj.Name);
+                            Notifier.AddPlayerAction(ref listBox1, currentPlayer.Name + " уничтожил\n" + attackedObj.Name);
                         }
                         else
                         {
@@ -140,7 +139,7 @@ namespace CSP_Game
                                 attackedObj.Name +
                                 " и наносит " +
                                 (selectedUnit as Unit).Damage +
-                                " урона");
+                                "\nурона");
                         }
                     }
                     else
@@ -157,7 +156,7 @@ namespace CSP_Game
                     Drawer.ClearArea(selectedUnit.Border, selectedUnit.Position.Item1, selectedUnit.Position.Item2, map);
                     Drawer.DrawObject(currentPlayer.Color, selectedUnit.Border, x, y, map);
                     PlayerTurn.MoveSelectedUnit(currentPlayer, selectedUnit as Unit, position);
-                    Notifier.AddPlayerAction(ref listBox1, currentPlayer.Name + " переместил " + selectedUnit.Name + " в точку " + position.ToString());
+                    Notifier.AddPlayerAction(ref listBox1, currentPlayer.Name + " переместил " + selectedUnit.Name + "\nв точку " + position.ToString());
                 }
                 TrySelect(position);
             }
@@ -167,7 +166,7 @@ namespace CSP_Game
                 {
                     Drawer.DrawObject(currentPlayer.Color, buildingObject.Border, x, y, map);
                     PlayerTurn.Build(currentPlayer, buildingObject, new Tuple<int, int>(x, y));
-                    Notifier.AddPlayerAction(ref listBox1, currentPlayer.Name + " построил " + buildingObject.Name + ", координаты: " + position.ToString());
+                    Notifier.AddPlayerAction(ref listBox1, currentPlayer.Name + " построил " + buildingObject.Name + ",\nкоординаты: " + position.ToString());
                     bIsBuilding = false;
                 }
                 else
@@ -176,10 +175,7 @@ namespace CSP_Game
                 }
             }
             UpdateObjectInfo();
-            /*            MoveOrSelectUnit(x, y);
-                        TryBuild(x, y);*/
-            Bitmap mapImage = Convertors.Photo2Bitmap(map);
-            pictureBox1.Image = /*Drawer.DrawMapWithIcons(players,*/ mapImage/*)*/;
+            pictureBox1.Image = Drawer.DrawMapWithIcons(players, Convertors.Photo2Bitmap(map), map.pixelHeight);
         }
 
         private bool TryBuild(int x, int y)
@@ -209,6 +205,7 @@ namespace CSP_Game
             }
             return able;
         }
+
         private bool AbleToMoveOrCreate(int x, int y, int offset)
         {
             bool able = true;
@@ -227,6 +224,7 @@ namespace CSP_Game
             }
             return able;
         }
+
         private bool AbleToAttack(int x, int y)
         {
             if (map[x, y].R * 255 != currentPlayer.Color.R && map[x, y].G * 255 != currentPlayer.Color.G && map[x, y].B * 255 != currentPlayer.Color.B && !(selectedUnit as Unit).bAttackedThisTurn)
@@ -247,6 +245,7 @@ namespace CSP_Game
                 return false;
             }
         }
+
         private void TrySelect(Tuple<int, int> coords)
         {
             if (map[coords.Item1, coords.Item2].R * 255 == currentPlayer.Color.R && map[coords.Item1, coords.Item2].G * 255 == currentPlayer.Color.G && map[coords.Item1, coords.Item2].B * 255 == currentPlayer.Color.B)
@@ -263,8 +262,8 @@ namespace CSP_Game
                     progressBar1.Value = 0;
                 }
             }
-
         }
+
         private void RemoveDeadUnits(List<AnyObject> deadUnits)
         {
             foreach (AnyObject destroyedObj in deadUnits)
@@ -272,6 +271,7 @@ namespace CSP_Game
                 Drawer.ClearArea(destroyedObj.Border, destroyedObj.Position.Item1, destroyedObj.Position.Item2, map);
             }
         }
+
         private void UpdateObjectInfo()
         {
             string[] info;
@@ -320,10 +320,10 @@ namespace CSP_Game
 
         }
         /* 
-1. Все проверки перемещения и атаки юнитов
-2. Реализовать более точную логику перемещения юнитов с учётом того, что путь не всегда чист
-(Возможные варианты = забить, алгоритм поиска кратчайшего пути, etc...)
-3. Если предыдущий пункт слишком сложен, можно его не делать, хватит и проверки
-*/
+        1. Все проверки перемещения и атаки юнитов
+        2. Реализовать более точную логику перемещения юнитов с учётом того, что путь не всегда чист
+        (Возможные варианты = забить, алгоритм поиска кратчайшего пути, etc...)
+        3. Если предыдущий пункт слишком сложен, можно его не делать, хватит и проверки
+        */
     }
 }

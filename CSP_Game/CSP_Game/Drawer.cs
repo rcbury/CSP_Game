@@ -51,8 +51,6 @@ namespace CSP_Game
                         var px = icon.GetPixel(i, j);
                         if (px.R == 255 && px.G == 255 && px.B == 255)
                             px = image.GetPixel(xs + i, ys + j);
-                        else
-                            px = col;
                         image.SetPixel(xs + i, ys + j, Color.FromArgb(px.R, px.G, px.B));
                     }
             }

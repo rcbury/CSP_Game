@@ -35,7 +35,6 @@ namespace CSP_Game
             Name = "Рудник";
             Icon = Image.FromFile("miningcamp.png");
             Rent = 0;
-
             GPT = 5;
         }
     }
