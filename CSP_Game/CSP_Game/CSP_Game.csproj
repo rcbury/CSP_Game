@@ -64,6 +64,7 @@
   <ItemGroup>
     <Compile Include="Drawer.cs" />
     <Compile Include="IArmored.cs" />
+    <Compile Include="Notifier.cs" />
     <Compile Include="PlayerTurn.cs" />
     <Compile Include="Building.cs" />
     <Compile Include="AnyObject.cs" />

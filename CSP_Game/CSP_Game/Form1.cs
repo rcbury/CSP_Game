@@ -9,7 +9,10 @@ using System.Windows.Forms;
 
 namespace CSP_Game
 {
-    public partial class Form1 : Form
+    public partial class Form1 : Form // является контроллером, поскольку отвечает за связь модели и отображения.
+                                      // реализует логику, позволяющую пользователю обращаться к модели посредством отображения
+                                      // выводит всю информацию посредством класса Drawer (обращение к выводу)
+                                      // выводит все уведомления посредством класса Notifier
     {
         Photo map;
         int playerIndex;
@@ -75,7 +78,6 @@ namespace CSP_Game
             PlayerTurn.OnTurnStart(currentPlayer);
             selectedUnit = null;
             UpdateObjectInfo();
-            label2.Text = currentPlayer.Treasure.ToString();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -102,7 +104,7 @@ namespace CSP_Game
             }
             else
             {
-                MessageBox.Show("Игра окончена! Война привела " + players.Where(player => player.IsAlive == true).First().Name + " к победе");
+                Notifier.NotifyPlayer("Игра окончена! Война привела " + players.Where(player => player.IsAlive == true).First().Name + " к победе");
             }
             UpdateObjectInfo();
         }
@@ -125,7 +127,29 @@ namespace CSP_Game
                     var attackedObj = PlayerTurn.Attack(attackedPlayer, selectedUnit as Unit, position);
                     if (attackedObj != null)
                     {
-                        Drawer.ClearArea(attackedObj.Border, attackedObj.Position.Item1, attackedObj.Position.Item2, map);
+                        if (attackedObj.HP <= 0)
+                        {
+                            Drawer.ClearArea(attackedObj.Border, attackedObj.Position.Item1, attackedObj.Position.Item2, map);
+                            Notifier.AddPlayerAction(ref listBox1, currentPlayer.Name + " уничтожил " + attackedObj.Name);
+                        }
+                        else
+                        {
+                            Notifier.AddPlayerAction(ref listBox1,
+                                currentPlayer.Name +
+                                " попадает по " +
+                                attackedObj.Name +
+                                " и наносит " +
+                                (selectedUnit as Unit).Damage +
+                                " урона");
+                        }
+                    }
+                    else
+                    {
+                        Notifier.AddPlayerAction(ref listBox1,
+                            currentPlayer.Name +
+                            " атакует клетку " +
+                            position.ToString() +
+                            " и промахивается");
                     }
                 }
                 else if (AbleToMoveOrCreate(x, y, selectedUnit.Border) && !(selectedUnit as Unit).bMovedThisTurn)
@@ -133,6 +157,7 @@ namespace CSP_Game
                     Drawer.ClearArea(selectedUnit.Border, selectedUnit.Position.Item1, selectedUnit.Position.Item2, map);
                     Drawer.DrawObject(currentPlayer.Color, selectedUnit.Border, x, y, map);
                     PlayerTurn.MoveSelectedUnit(currentPlayer, selectedUnit as Unit, position);
+                    Notifier.AddPlayerAction(ref listBox1, currentPlayer.Name + " переместил " + selectedUnit.Name + " в точку " + position.ToString());
                 }
                 TrySelect(position);
             }
@@ -142,6 +167,7 @@ namespace CSP_Game
                 {
                     Drawer.DrawObject(currentPlayer.Color, buildingObject.Border, x, y, map);
                     PlayerTurn.Build(currentPlayer, buildingObject, new Tuple<int, int>(x, y));
+                    Notifier.AddPlayerAction(ref listBox1, currentPlayer.Name + " построил " + buildingObject.Name + ", координаты: " + position.ToString());
                     bIsBuilding = false;
                 }
                 else
@@ -172,13 +198,13 @@ namespace CSP_Game
                 }
                 else
                 {
-                    MessageBox.Show("Не хватает средств!");
+                    Notifier.NotifyPlayer("Не хватает средств!");
                 }
 
             }
             else
             {
-                MessageBox.Show("Постройка здесь невозможна!");
+                Notifier.NotifyPlayer("Постройка здесь невозможна!");
                 able = false;
             }
             return able;
@@ -248,34 +274,50 @@ namespace CSP_Game
         }
         private void UpdateObjectInfo()
         {
+            string[] info;
+            Label[] labels = new Label[] { label2, label6, label7, label9, label11, label13, label16 };
             if (selectedUnit != null)
             {
                 if (selectedUnit is Unit)
                 {
-                    label6.Text = selectedUnit.Name;
-                    label7.Text = selectedUnit.Position.ToString();
-                    label9.Text = (selectedUnit as Unit).Damage.ToString();
-                    label11.Text = (selectedUnit as Unit).bMovedThisTurn == false ? "Да" : "Нет";
-                    label13.Text = (selectedUnit as Unit).bAttackedThisTurn == false ? "Да" : "Нет";
+                    info = new string[] {
+                        currentPlayer.Treasure.ToString(),
+                        selectedUnit.Name,
+                        selectedUnit.Position.ToString(), 
+                        (selectedUnit as Unit).Damage.ToString(), 
+                        (selectedUnit as Unit).bMovedThisTurn == false ? "Да" : "Нет",
+                        (selectedUnit as Unit).bAttackedThisTurn == false ? "Да" : "Нет",
+                        currentPlayer.TotalGPT.ToString()
+                    };
                 }
                 else
                 {
-                    label6.Text = selectedUnit.Name;
-                    label7.Text = selectedUnit.Position.ToString();
-                    label9.Text = "0";
-                    label11.Text = "Нет";
-                    label13.Text = "Нет";
+                    info = new string[] {
+                        currentPlayer.Treasure.ToString(),
+                        selectedUnit.Name,
+                        selectedUnit.Position.ToString(),
+                        "0", 
+                        "Нет", 
+                        "Нет",
+                        currentPlayer.TotalGPT.ToString()
+                    };
                 }
             }
             else
             {
-                label6.Text = "";
-                label7.Text = "";
-                label9.Text = "";
-                label11.Text = "";
-                label13.Text = "";
+                info = new string[] { currentPlayer.Treasure.ToString(), "", "", "", "", "", label16.Text = currentPlayer.TotalGPT.ToString() };
             }
-            label2.Text = currentPlayer.Treasure.ToString();
+            Notifier.UpdatePlayerInfo(selectedUnit, info, labels);
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label12_Click(object sender, EventArgs e)
+        {
+
         }
         /* 
 1. Все проверки перемещения и атаки юнитов

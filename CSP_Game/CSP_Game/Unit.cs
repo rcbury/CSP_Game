@@ -3,7 +3,8 @@ using System.Drawing;
 
 namespace CSP_Game
 {
-    public class Unit : AnyObject, IArmored
+    public class Unit : AnyObject, IArmored  // представляет собой сущность, с которой в дальнейшем может взаимодействовать модель, поскольку предоставляет набор свойств необходимых для того чтобы код не дублировался
+                                             // и сущности можно было логически разделить
     {
         public int MovingRange { get; set; }
         public bool bMovedThisTurn { get; set; }
