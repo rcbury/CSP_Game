@@ -45,7 +45,7 @@ namespace CSP_Game
             Tuple<int, int>[] playersCapitals = new Tuple<int, int>[]
             {
                 new Tuple<int, int>(4, 4),
-                new Tuple<int, int>(25, 24),
+                new Tuple<int, int>(25, 25),
             };
             foreach (var player in players)
             {
