@@ -1,6 +1,6 @@
 ﻿namespace CSP_Game
 {
-    partial class Form1
+    partial class Game
     {
         /// <summary>
         /// Обязательная переменная конструктора.
@@ -28,10 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.button2 = new System.Windows.Forms.Button();
+            this.mapBox = new System.Windows.Forms.PictureBox();
+            this.turnButton = new System.Windows.Forms.Button();
+            this.buildingComboBox = new System.Windows.Forms.ComboBox();
+            this.selectButton = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -50,50 +50,50 @@
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.label15 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
-            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.historyBox = new System.Windows.Forms.ListBox();
             this.label17 = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.mapBox)).BeginInit();
             this.SuspendLayout();
             // 
-            // pictureBox1
+            // mapBox
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(3, 3);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(703, 343);
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseClick);
+            this.mapBox.Location = new System.Drawing.Point(3, 3);
+            this.mapBox.Name = "mapBox";
+            this.mapBox.Size = new System.Drawing.Size(703, 343);
+            this.mapBox.TabIndex = 0;
+            this.mapBox.TabStop = false;
+            this.mapBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseClick);
             // 
-            // button1
+            // turnButton
             // 
-            this.button1.Font = new System.Drawing.Font("Rockwell", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(840, 10);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(213, 39);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "Завершить ход";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.turnButton.Font = new System.Drawing.Font("Rockwell", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.turnButton.Location = new System.Drawing.Point(840, 10);
+            this.turnButton.Name = "turnButton";
+            this.turnButton.Size = new System.Drawing.Size(213, 39);
+            this.turnButton.TabIndex = 1;
+            this.turnButton.Text = "Завершить ход";
+            this.turnButton.UseVisualStyleBackColor = true;
+            this.turnButton.Click += new System.EventHandler(this.button1_Click);
             // 
-            // comboBox1
+            // buildingComboBox
             // 
-            this.comboBox1.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(888, 202);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(177, 32);
-            this.comboBox1.TabIndex = 2;
+            this.buildingComboBox.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buildingComboBox.FormattingEnabled = true;
+            this.buildingComboBox.Location = new System.Drawing.Point(888, 202);
+            this.buildingComboBox.Name = "buildingComboBox";
+            this.buildingComboBox.Size = new System.Drawing.Size(177, 32);
+            this.buildingComboBox.TabIndex = 2;
             // 
-            // button2
+            // selectButton
             // 
-            this.button2.Font = new System.Drawing.Font("Rockwell", 15.75F);
-            this.button2.Location = new System.Drawing.Point(888, 228);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(177, 37);
-            this.button2.TabIndex = 3;
-            this.button2.Text = "Выбрать";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.selectButton.Font = new System.Drawing.Font("Rockwell", 15.75F);
+            this.selectButton.Location = new System.Drawing.Point(888, 228);
+            this.selectButton.Name = "selectButton";
+            this.selectButton.Size = new System.Drawing.Size(177, 37);
+            this.selectButton.TabIndex = 3;
+            this.selectButton.Text = "Выбрать";
+            this.selectButton.UseVisualStyleBackColor = true;
+            this.selectButton.Click += new System.EventHandler(this.button2_Click);
             // 
             // label2
             // 
@@ -221,7 +221,6 @@
             this.label12.Size = new System.Drawing.Size(197, 24);
             this.label12.TabIndex = 16;
             this.label12.Text = "Может двигаться?";
-            this.label12.Click += new System.EventHandler(this.label12_Click);
             // 
             // label13
             // 
@@ -262,18 +261,18 @@
             this.label16.Size = new System.Drawing.Size(2, 33);
             this.label16.TabIndex = 21;
             // 
-            // listBox1
+            // historyBox
             // 
-            this.listBox1.BackColor = System.Drawing.SystemColors.Control;
-            this.listBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.listBox1.Font = new System.Drawing.Font("Tahoma", 11F);
-            this.listBox1.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.ItemHeight = 18;
-            this.listBox1.Location = new System.Drawing.Point(1075, 55);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(295, 648);
-            this.listBox1.TabIndex = 23;
+            this.historyBox.BackColor = System.Drawing.SystemColors.Control;
+            this.historyBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.historyBox.Font = new System.Drawing.Font("Tahoma", 11F);
+            this.historyBox.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.historyBox.FormattingEnabled = true;
+            this.historyBox.ItemHeight = 18;
+            this.historyBox.Location = new System.Drawing.Point(1075, 55);
+            this.historyBox.Name = "historyBox";
+            this.historyBox.Size = new System.Drawing.Size(295, 648);
+            this.historyBox.TabIndex = 23;
             // 
             // label17
             // 
@@ -285,13 +284,13 @@
             this.label17.TabIndex = 24;
             this.label17.Text = "История";
             // 
-            // Form1
+            // Game
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1370, 749);
             this.Controls.Add(this.label17);
-            this.Controls.Add(this.listBox1);
+            this.Controls.Add(this.historyBox);
             this.Controls.Add(this.label15);
             this.Controls.Add(this.label16);
             this.Controls.Add(this.progressBar1);
@@ -309,14 +308,13 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.pictureBox1);
-            this.Name = "Form1";
-            this.Text = "Form1";
-            this.Load += new System.EventHandler(this.Form1_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.Controls.Add(this.selectButton);
+            this.Controls.Add(this.buildingComboBox);
+            this.Controls.Add(this.turnButton);
+            this.Controls.Add(this.mapBox);
+            this.Name = "Game";
+            this.Text = "Game";
+            ((System.ComponentModel.ISupportInitialize)(this.mapBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -324,29 +322,29 @@
 
         #endregion
 
-        private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.ComboBox comboBox1;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Label label2;
+        public System.Windows.Forms.PictureBox mapBox;
+        public System.Windows.Forms.Button turnButton;
+        public System.Windows.Forms.ComboBox buildingComboBox;
+        private System.Windows.Forms.Button selectButton;
+        public System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.ProgressBar progressBar1;
+        public System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label7;
+        public System.Windows.Forms.Label label6;
+        public System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Label label9;
+        public System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.Label label11;
+        public System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.Label label13;
+        public System.Windows.Forms.Label label13;
         private System.Windows.Forms.Label label14;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.ListBox listBox1;
+        public System.Windows.Forms.Label label16;
+        public System.Windows.Forms.ListBox historyBox;
         private System.Windows.Forms.Label label17;
     }
 }
