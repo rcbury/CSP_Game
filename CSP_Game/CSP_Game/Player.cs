@@ -20,7 +20,7 @@ namespace CSP_Game
             Name = name;
             Color = col;
             Mastery = new Dictionary<Tuple<int, int>, AnyObject>();
-            TotalGPT = 5;
+            TotalGPT = 100;
         }
         public void AddMastery(Tuple<int, int> coords, AnyObject obj)
         {

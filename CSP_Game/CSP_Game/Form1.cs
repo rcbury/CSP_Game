@@ -71,8 +71,26 @@ namespace CSP_Game
                 typeof(Tower),
                 typeof(MiningCamp)
             };
-            comboBox1.DataSource = masterySelector;
+            string[] masteryNames = new string[]
+            {
+                "Танк",
+                "Штурмовик",
+                "Башня",
+                "Рудник"
+            };
+            DataSet masteryds = new DataSet();
+            masteryds.Tables.Add();
+            masteryds.Tables[0].Columns.Add("Type");
+            masteryds.Tables[0].Columns.Add("Name");
+            for (int i = 0; i < masterySelector.Length; i++) 
+            {
+                masteryds.Tables[0].Rows.Add();
+                masteryds.Tables[0].Rows[i]["Type"] = masterySelector[i];
+                masteryds.Tables[0].Rows[i]["Name"] = masteryNames[i];
+            }
+            comboBox1.DataSource = masteryds.Tables[0];
             comboBox1.DisplayMember = "Name";
+            comboBox1.ValueMember = "Type";
             PlayerTurn.OnTurnStart(currentPlayer);
             pictureBox1.Image = Drawer.DrawMapWithIcons(players,Convertors.Photo2Bitmap(map), map.pixelHeight);
             selectedUnit = null;
@@ -119,9 +137,10 @@ namespace CSP_Game
             var x = (int)Math.Floor((double)e.X / map.pixelWidth); // X relatively form
             var y = (int)Math.Floor((double)e.Y / map.pixelHeight);// Y relatively form
             var position = new Tuple<int, int>(x, y);
-            if (selectedUnit is Unit)
+            var unit = selectedUnit as Unit;
+            if (unit != null)
             {
-                if (AbleToAttack(x, y) && !(selectedUnit as Unit).bAttackedThisTurn)
+                if (AbleToAttack(x, y, unit) && !(selectedUnit as Unit).bAttackedThisTurn)
                 {
                     var attackedObj = PlayerTurn.Attack(attackedPlayer, selectedUnit as Unit, position);
                     if (attackedObj != null)
@@ -151,11 +170,12 @@ namespace CSP_Game
                             " и промахивается");
                     }
                 }
-                else if (AbleToMoveOrCreate(x, y, selectedUnit.Border) && !(selectedUnit as Unit).bMovedThisTurn)
+                else if (AbleToMoveOrCreate(x, y, selectedUnit.Border, unit) 
+                    && !unit.bMovedThisTurn)
                 {
                     Drawer.ClearArea(selectedUnit.Border, selectedUnit.Position.Item1, selectedUnit.Position.Item2, map);
                     Drawer.DrawObject(currentPlayer.Color, selectedUnit.Border, x, y, map);
-                    PlayerTurn.MoveSelectedUnit(currentPlayer, selectedUnit as Unit, position);
+                    PlayerTurn.MoveSelectedUnit(currentPlayer, unit, position);
                     Notifier.AddPlayerAction(ref listBox1, currentPlayer.Name + " переместил " + selectedUnit.Name + "\nв точку " + position.ToString());
                 }
                 TrySelect(position);
@@ -164,10 +184,14 @@ namespace CSP_Game
             {
                 if (bIsBuilding && TryBuild(x, y))
                 {
-                    Drawer.DrawObject(currentPlayer.Color, buildingObject.Border, x, y, map);
-                    PlayerTurn.Build(currentPlayer, buildingObject, new Tuple<int, int>(x, y));
-                    Notifier.AddPlayerAction(ref listBox1, currentPlayer.Name + " построил " + buildingObject.Name + ",\nкоординаты: " + position.ToString());
-                    bIsBuilding = false;
+                    var dist = FindDistanceToClosestBuilding(buildingObject);
+                    if (dist < 10)
+                    {
+                        Drawer.DrawObject(currentPlayer.Color, buildingObject.Border, x, y, map);
+                        PlayerTurn.Build(currentPlayer, buildingObject, new Tuple<int, int>(x, y));
+                        Notifier.AddPlayerAction(ref listBox1, currentPlayer.Name + " построил " + buildingObject.Name + ",\nкоординаты: " + position.ToString());
+                        bIsBuilding = false;
+                    }
                 }
                 else
                 {
@@ -181,7 +205,7 @@ namespace CSP_Game
         private bool TryBuild(int x, int y)
         {
             bool able = false;
-            Type selectedObject = (Type)comboBox1.SelectedValue;
+            Type selectedObject = Type.GetType(comboBox1.SelectedValue.ToString());
             AnyObject objectToBuild = (AnyObject)selectedObject
                 .GetConstructor(new Type[] { typeof(Player), typeof(Tuple<int, int>) })
                 .Invoke(new object[] { currentPlayer, new Tuple<int, int>(x, y) });
@@ -225,9 +249,33 @@ namespace CSP_Game
             return able;
         }
 
-        private bool AbleToAttack(int x, int y)
+        private bool AbleToMoveOrCreate(int x, int y, int offset, Unit unit)
         {
-            if (map[x, y].R * 255 != currentPlayer.Color.R && map[x, y].G * 255 != currentPlayer.Color.G && map[x, y].B * 255 != currentPlayer.Color.B && !(selectedUnit as Unit).bAttackedThisTurn)
+            bool able = true;
+            for (int i = x - offset; i <= x + offset; i++)
+            {
+                for (int j = y - offset; j <= y + offset; j++)
+                {
+                    if (!(map[i, j].R * 255 == Color.White.R &&
+                        map[i, j].G * 255 == Color.White.G &&
+                        map[i, j].B * 255 == Color.White.B) ||
+                        (Math.Abs(unit.Position.Item1 - x) + Math.Abs(unit.Position.Item2 - y)) > unit.MovingRange)
+                    {
+                        able = false;
+                        break;
+                    }
+                }
+            }
+            return able;
+        }
+
+        private bool AbleToAttack(int x, int y, Unit unit)
+        {
+            if ((map[x, y].R * 255 != currentPlayer.Color.R 
+                && map[x, y].G * 255 != currentPlayer.Color.G 
+                && map[x, y].B * 255 != currentPlayer.Color.B) 
+                && !unit.bAttackedThisTurn
+                && (Math.Abs(unit.Position.Item1 - x) + Math.Abs(unit.Position.Item2 - y)) <= unit.AttackRange)
             {
                 var attackedPlayer = players.Where(player => player.Color.R == map[x, y].R * 255 && player.Color.G == map[x, y].G * 255 && player.Color.B == map[x, y].B * 255);
                 if (attackedPlayer.Count() != 0)
@@ -244,6 +292,48 @@ namespace CSP_Game
             {
                 return false;
             }
+        }
+
+        private int FindDistanceToClosestBuilding(AnyObject obj) 
+        {
+            Queue<Point> queue = new Queue<Point>();
+            HashSet<Point> visited = new HashSet<Point>();
+            HashSet<Point> buildingSet = new HashSet<Point>();
+            for (int i = 0; i < map.width; i++)
+                for (int j = 0; j < map.height; j++)
+                {
+                    var point = new Tuple<int, int>(i, j);
+                    if (currentPlayer.Mastery.ContainsKey(point))
+                        if (currentPlayer.Mastery[point] is Building)
+                            buildingSet.Add(new Point(currentPlayer.Mastery[point].Position.Item1,
+                                currentPlayer.Mastery[point].Position.Item2));
+                }
+            queue.Enqueue(new Point(obj.Position.Item1, obj.Position.Item2));
+            visited.Add(new Point(obj.Position.Item1, obj.Position.Item2));
+            while (queue.Count != 0) 
+            {
+                Point currCell = queue.Dequeue();
+                if (currCell.X < 0 || currCell.X >= map.width
+                    || currCell.Y < 0 || currCell.Y >= map.height)
+                    continue;
+                for (var dy = -1; dy <= 1; dy++)
+                    for (var dx = -1; dx <= 1; dx++)
+                        if (dx != 0 && dy != 0) continue;
+                        else
+                        {
+                            Point newCell = new Point { X = currCell.X + dx, Y = currCell.Y + dy };
+                            if (visited.Contains(newCell)) continue;
+                            visited.Add(newCell);
+                            queue.Enqueue(newCell);
+                        }
+                if (currentPlayer.Mastery.ContainsKey(new Tuple<int, int>(currCell.X, currCell.Y)))
+                    if (currentPlayer.Mastery[new Tuple<int, int>(currCell.X, currCell.Y)] is Unit)
+                        continue;
+                if (buildingSet.Contains(currCell))
+                    return (Math.Abs(obj.Position.Item1 - currCell.X)
+                        + Math.Abs(obj.Position.Item2 - currCell.Y));
+            }
+            return 0;
         }
 
         private void TrySelect(Tuple<int, int> coords)
@@ -319,11 +409,5 @@ namespace CSP_Game
         {
 
         }
-        /* 
-        1. Все проверки перемещения и атаки юнитов
-        2. Реализовать более точную логику перемещения юнитов с учётом того, что путь не всегда чист
-        (Возможные варианты = забить, алгоритм поиска кратчайшего пути, etc...)
-        3. Если предыдущий пункт слишком сложен, можно его не делать, хватит и проверки
-        */
     }
 }

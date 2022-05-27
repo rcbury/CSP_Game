@@ -28,10 +28,10 @@ namespace CSP_Game
 
             MovingRange = 3;
             bMovedThisTurn = true;
-            AttackRange = 5;
+            AttackRange = 10;
             bAttackedThisTurn = true;
             Armor = 0.6;
-            Damage = 20;
+            Damage = 40;
 
             Rent = 5;
         }
