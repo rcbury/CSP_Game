@@ -90,7 +90,11 @@
 =======
     <EmbeddedResource Include="Game.resx">
       <DependentUpon>Game.cs</DependentUpon>
+<<<<<<< Updated upstream
 >>>>>>> master
+=======
+      <SubType>Designer</SubType>
+>>>>>>> Stashed changes
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
