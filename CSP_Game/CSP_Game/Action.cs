@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace CSP_Game
 {
-    public class Action
+    public class Action // Является контроллером действий игрока, поскольку осуществляет проверку данных и вызывает соответствующие методы игрока.
     {
         public void Build(int x, int y, Tuple<int, int> position, Game form)
         {
@@ -17,7 +17,7 @@ namespace CSP_Game
             {
                 Drawer.DrawObject(form.currentPlayer.Color, form.buildingObject.Border, x, y, form.map);
                 PlayerTurn.Build(form.currentPlayer, form.buildingObject, new Tuple<int, int>(x, y));
-                Notifier.AddPlayerAction(ref form.historyBox, form.currentPlayer.Name + " построил " + form.buildingObject.Name + ",\nкоординаты: " + position.ToString());
+                Notifier.AddPlayerAction(ref form.historyBox, form.currentPlayer.Name + " построил " + form.buildingObject.Name + ", \nкоординаты: " + position.ToString());
                 form.bIsBuilding = false;
             }
         }
@@ -27,7 +27,7 @@ namespace CSP_Game
             Drawer.ClearArea(form.selectedUnit.Border, form.selectedUnit.Position.Item1, form.selectedUnit.Position.Item2, form.map);
             Drawer.DrawObject(form.currentPlayer.Color, form.selectedUnit.Border, x, y, form.map);
             PlayerTurn.MoveSelectedUnit(form.currentPlayer, unit, position);
-            Notifier.AddPlayerAction(ref form.historyBox, form.currentPlayer.Name + " переместил " + form.selectedUnit.Name + "\nв точку " + position.ToString());
+            Notifier.AddPlayerAction(ref form.historyBox, form.currentPlayer.Name + " переместил " + form.selectedUnit.Name + " \nв точку " + position.ToString());
         }
 
         public void Attack(Tuple<int, int> position, Game form)
@@ -61,7 +61,7 @@ namespace CSP_Game
             }
         }
 
-        public int FindDistanceToClosestBuilding(AnyObject obj, Game form)
+        public int FindDistanceToClosestBuilding(AnyObject obj, Game form) // Использует алгоритм поиска в ширину для нахождения ближайщей постройки и проверки возможности постройки
         {
             Queue<Point> queue = new Queue<Point>();
             HashSet<Point> visited = new HashSet<Point>();
@@ -114,34 +114,37 @@ namespace CSP_Game
         public void UpdateObjectInfo(Game form)
         {
             string[] info;
-            Label[] labels = new Label[] { form.label2, form.label6, form.label7,
-                form.label9, form.label11, form.label13,
-                form.label16 };
+            Label[] labels = new Label[] { 
+                form.label2, 
+                form.label6, 
+                form.label7,
+                form.label9, 
+                form.label11, 
+                form.label13,
+                form.label16 
+            };
             if (form.selectedUnit != null)
             {
-                if (form.selectedUnit is Unit)
-                {
-                    info = new string[] {
+                info = new string[7] {
                         form.currentPlayer.Treasure.ToString(),
                         form.selectedUnit.Name,
                         form.selectedUnit.Position.ToString(),
-                        (form.selectedUnit as Unit).Damage.ToString(),
-                        (form.selectedUnit as Unit).bMovedThisTurn == false ? "Да" : "Нет",
-                        (form.selectedUnit as Unit).bAttackedThisTurn == false ? "Да" : "Нет",
-                        form.currentPlayer.TotalGPT.ToString()
-                    };
+                        "","","",""
+                };
+
+                if (form.selectedUnit is Unit unit)
+                {
+                    info[3] = unit.Damage.ToString();
+                    info[4] = unit.bMovedThisTurn == false ? "Да" : "Нет";
+                    info[5] = unit.bAttackedThisTurn == false ? "Да" : "Нет";
+                    info[6] = form.currentPlayer.TotalGPT.ToString();
                 }
                 else
                 {
-                    info = new string[] {
-                        form.currentPlayer.Treasure.ToString(),
-                        form.selectedUnit.Name,
-                        form.selectedUnit.Position.ToString(),
-                        "0",
-                        "Нет",
-                        "Нет",
-                        form.currentPlayer.TotalGPT.ToString()
-                    };
+                    info[3] = "0";
+                    info[4] = "Нет";
+                    info[5] = "Нет";
+                    info[6] = form.currentPlayer.TotalGPT.ToString();
                 }
             }
             else

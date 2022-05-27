@@ -269,16 +269,16 @@
             this.historyBox.ForeColor = System.Drawing.SystemColors.WindowText;
             this.historyBox.FormattingEnabled = true;
             this.historyBox.ItemHeight = 18;
-            this.historyBox.Location = new System.Drawing.Point(1075, 55);
+            this.historyBox.Location = new System.Drawing.Point(760, 482);
             this.historyBox.Name = "historyBox";
-            this.historyBox.Size = new System.Drawing.Size(295, 648);
+            this.historyBox.Size = new System.Drawing.Size(444, 252);
             this.historyBox.TabIndex = 23;
             // 
             // label17
             // 
             this.label17.AutoSize = true;
             this.label17.Font = new System.Drawing.Font("Rockwell", 20F);
-            this.label17.Location = new System.Drawing.Point(1069, 11);
+            this.label17.Location = new System.Drawing.Point(754, 448);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(120, 31);
             this.label17.TabIndex = 24;
@@ -288,7 +288,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1370, 749);
+            this.ClientSize = new System.Drawing.Size(1210, 749);
             this.Controls.Add(this.label17);
             this.Controls.Add(this.historyBox);
             this.Controls.Add(this.label15);

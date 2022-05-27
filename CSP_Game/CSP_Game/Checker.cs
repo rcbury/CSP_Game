@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CSP_Game
 {
-    public class Checker
+    public class Checker // Является контроллером, поскольку проверяет возможность совершать те или иные действия игроком
     {
         public bool TryBuild(int x, int y, Game form)
         {

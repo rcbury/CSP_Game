@@ -19,11 +19,11 @@ namespace CSP_Game
         public List<Player> players;
         public Player currentPlayer;
         public bool bIsBuilding = false; // Check if user wants to build smth
-        public AnyObject selectedUnit;   // Contains selected object
+        public AnyObject selectedUnit = null;   // Contains selected object
         public AnyObject buildingObject; // Contains object for building
         public Player attackedPlayer;    // Contains attacked player for one turn
-        public Action act = new Action();
-        public Checker check = new Checker();
+        public Action act = new Action(); // Contains methods which perform player actions and drawin it
+        public Checker check = new Checker(); // Contains methods which returning player ability status to perform player's actions later
 
         public void InitializeMap()
         {
@@ -47,7 +47,7 @@ namespace CSP_Game
             Tuple<int, int>[] playersCapitals = new Tuple<int, int>[]
             {
                 new Tuple<int, int>(4, 4),
-                new Tuple<int, int>(25, 24),
+                new Tuple<int, int>(25, 25),
             };
             foreach (var player in players)
             {
@@ -56,16 +56,16 @@ namespace CSP_Game
                 Drawer.DrawObject(player.Color, 4, capitalCoords.Item1, capitalCoords.Item2, map);
             }
             playerIndex = 0;
-            currentPlayer = players[playerIndex];
+            currentPlayer = players[0];
             Text = currentPlayer.Name;
         }
 
         public Game()
         {
             InitializeComponent();
-            WindowState = FormWindowState.Maximized;
             InitializeMap();
             InitializePlayers();
+            WindowState = FormWindowState.Maximized;
             Type[] masterySelector = new Type[]
             {
                 typeof(Tank),
@@ -93,9 +93,8 @@ namespace CSP_Game
             buildingComboBox.DataSource = masteryds.Tables[0];
             buildingComboBox.DisplayMember = "Name";
             buildingComboBox.ValueMember = "Type";
-            PlayerTurn.OnTurnStart(currentPlayer);
             mapBox.Image = Drawer.DrawMapWithIcons(players,Convertors.Photo2Bitmap(map), map.pixelHeight);
-            selectedUnit = null;
+            PlayerTurn.OnTurnStart(currentPlayer);
             act.UpdateObjectInfo(this);
         }
 

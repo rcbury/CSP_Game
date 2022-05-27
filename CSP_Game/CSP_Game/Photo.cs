@@ -1,4 +1,5 @@
 using MyPhotoshop.Data;
+using System;
 
 namespace MyPhotoshop
 {
@@ -12,7 +13,17 @@ namespace MyPhotoshop
         private readonly Pixel[,] data;
         public Pixel this[int x, int y]
         {
-            get { return data[x, y]; }
+            get
+            {
+                try
+                {
+                    return data[x, y];
+                }
+                catch (Exception)
+                {
+                    return data[0, 0];
+                }
+            }
             set { data[x, y] = value; }
         }
 
