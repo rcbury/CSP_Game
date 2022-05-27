@@ -6,6 +6,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using System.Reflection;
 
 namespace CSP_Game
 {
@@ -76,7 +77,6 @@ namespace CSP_Game
             PlayerTurn.OnTurnStart(currentPlayer);
             pictureBox1.Image = Drawer.DrawMapWithIcons(players,Convertors.Photo2Bitmap(map), map.pixelHeight);
             selectedUnit = null;
-            UpdateObjectInfo();
         }
 
         private void button1_Click(object sender, EventArgs e)
