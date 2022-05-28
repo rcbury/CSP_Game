@@ -271,7 +271,7 @@
             this.historyBox.ItemHeight = 18;
             this.historyBox.Location = new System.Drawing.Point(760, 482);
             this.historyBox.Name = "historyBox";
-            this.historyBox.Size = new System.Drawing.Size(444, 252);
+            this.historyBox.Size = new System.Drawing.Size(444, 126);
             this.historyBox.TabIndex = 23;
             // 
             // label17

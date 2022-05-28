@@ -27,7 +27,7 @@ namespace CSP_Game
 
         public void InitializeMap()
         {
-            map = new Photo(30, 30);
+            map = new Photo(29, 26);
             mapBox.Height = map.height * map.pixelHeight;
             mapBox.Width = map.width * map.pixelWidth;
             for (int x = 0; x < map.width; x++)
@@ -47,7 +47,7 @@ namespace CSP_Game
             Tuple<int, int>[] playersCapitals = new Tuple<int, int>[]
             {
                 new Tuple<int, int>(4, 4),
-                new Tuple<int, int>(25, 25),
+                new Tuple<int, int>(24, 21),
             };
             foreach (var player in players)
             {
@@ -76,7 +76,7 @@ namespace CSP_Game
             string[] masteryNames = new string[]
             {
                 "Танк",
-                "Штурмовик",
+                "Снайпер",
                 "Башня",
                 "Рудник"
             };
