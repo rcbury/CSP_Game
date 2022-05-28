@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CSP_Game
 {
@@ -113,12 +110,12 @@ namespace CSP_Game
                 if (selected != null)
                 {
                     form.selectedUnit = selected;
-                    form.progressBar1.Value = (int)(form.selectedUnit.HP / form.selectedUnit.FullHP * 100);
+                    form.healhBar.Value = (int)(form.selectedUnit.HP / form.selectedUnit.FullHP * 100);
                 }
                 else
                 {
                     form.selectedUnit = null;
-                    form.progressBar1.Value = 0;
+                    form.healhBar.Value = 0;
                 }
             }
         }

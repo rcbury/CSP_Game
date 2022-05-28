@@ -1,6 +1,4 @@
-﻿using MyPhotoshop;
-using MyPhotoshop.Data;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
@@ -98,7 +96,13 @@ namespace CSP_Game
             act.UpdateObjectInfo(this);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void selectButtonClick(object sender, EventArgs e)
+        {
+            bIsBuilding = true;
+            selectedUnit = null;
+        }
+
+        private void turnButtonClick(object sender, EventArgs e)
         {
             if (players.Where(player => player.IsAlive).Count() != 1)
             {
@@ -110,16 +114,16 @@ namespace CSP_Game
                 var deadUnits = PlayerTurn.OnTurnStart(currentPlayer);
                 if (deadUnits != null)
                 {
-                    act.RemoveDeadUnits(deadUnits,this);
+                    act.RemoveDeadUnits(deadUnits, this);
                     Bitmap mapImage = Convertors.Photo2Bitmap(map);
-                    mapBox.Image = Drawer.DrawMapWithIcons(players,Convertors.Photo2Bitmap(map),
+                    mapBox.Image = Drawer.DrawMapWithIcons(players, Convertors.Photo2Bitmap(map),
                         map.pixelHeight);
                 }
 
                 selectedUnit = null;
                 attackedPlayer = null;
                 buildingObject = null;
-                label2.Text = currentPlayer.Treasure.ToString();
+                goldLabel.Text = currentPlayer.Treasure.ToString();
             }
             else
             {
@@ -130,13 +134,7 @@ namespace CSP_Game
             act.UpdateObjectInfo(this);
         }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            bIsBuilding = true;
-            selectedUnit = null;
-        }
-
-        private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
+        private void mapBoxMouseClick(object sender, MouseEventArgs e)
         {
             var x = (int)Math.Floor((double)e.X / map.pixelWidth); // X relatively form
             var y = (int)Math.Floor((double)e.Y / map.pixelHeight);// Y relatively form
@@ -144,30 +142,30 @@ namespace CSP_Game
             var unit = selectedUnit as Unit;
             if (unit != null)
             {
-                if (check.AbleToAttack(x, y, unit,this) && !unit.bAttackedThisTurn)
+                if (check.AbleToAttack(x, y, unit, this) && !unit.bAttackedThisTurn)
                 {
-                    act.Attack(position,this);
+                    act.Attack(position, this);
                 }
-                else if (check.AbleToMoveOrCreate(x, y, selectedUnit.Border, unit, this) 
+                else if (check.AbleToMoveOrCreate(x, y, selectedUnit.Border, unit, this)
                     && !unit.bMovedThisTurn)
                 {
                     act.Move(x, y, position, unit, this);
                 }
-                check.TrySelect(position,this);
+                check.TrySelect(position, this);
             }
             else
             {
                 if (bIsBuilding && check.TryBuild(x, y, this))
                 {
-                    act.Build(x, y, position,this);
+                    act.Build(x, y, position, this);
                 }
                 else
                 {
-                    check.TrySelect(position,this);
+                    check.TrySelect(position, this);
                 }
             }
             act.UpdateObjectInfo(this);
-            mapBox.Image = Drawer.DrawMapWithIcons(players, 
+            mapBox.Image = Drawer.DrawMapWithIcons(players,
                 Convertors.Photo2Bitmap(map), map.pixelHeight);
         }
     }

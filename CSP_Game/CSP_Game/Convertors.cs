@@ -1,8 +1,7 @@
-using MyPhotoshop.Data;
 using System;
 using System.Drawing;
 
-namespace MyPhotoshop
+namespace CSP_Game
 {
     public static class Convertors // является моделью, поскольку реализует одну из главных задач - конвертирует картинку в массив пикселей заданного размера
     {

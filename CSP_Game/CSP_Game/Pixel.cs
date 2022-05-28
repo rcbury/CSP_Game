@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MyPhotoshop.Data
+namespace CSP_Game
 {
 
     public struct Pixel // является моделью, поскольку реализует логику, отвечающую за правильную отрисовку карты

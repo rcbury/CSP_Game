@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace CSP_Game
@@ -115,13 +112,13 @@ namespace CSP_Game
         {
             string[] info;
             Label[] labels = new Label[] { 
-                form.label2, 
+                form.goldLabel, 
                 form.label6, 
                 form.label7,
                 form.label9, 
                 form.label11, 
                 form.label13,
-                form.label16 
+                form.GPTLabel 
             };
             if (form.selectedUnit != null)
             {
@@ -149,7 +146,7 @@ namespace CSP_Game
             }
             else
             {
-                info = new string[] { form.currentPlayer.Treasure.ToString(), "", "", "", "", "", form.label16.Text = form.currentPlayer.TotalGPT.ToString() };
+                info = new string[] { form.currentPlayer.Treasure.ToString(), "", "", "", "", "", form.GPTLabel.Text = form.currentPlayer.TotalGPT.ToString() };
             }
             Notifier.UpdatePlayerInfo(form.selectedUnit, info, labels);
         }
